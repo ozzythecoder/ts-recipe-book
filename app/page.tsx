@@ -1,5 +1,4 @@
-import { Recipe } from "@prisma/client";
-import { getRecipes, getRecipeById } from "@api/recipe";
+import { getRecipes } from "@/lib/fetch";
 import RecipeDisplay from "@comp/RecipeDisplay";
 
 export default async function Home() {
