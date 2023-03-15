@@ -5,11 +5,17 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const recipeId = parseInt(params.id)
-  const recipe = await db.recipe.findUnique({
-    where: {
-      id: recipeId
-    }
-  })
-  return NextResponse.json(recipe);
+  try {
+
+    const recipeId = parseInt(params.id)
+    const recipe = await db.recipe.findUnique({
+      where: {
+        id: recipeId
+      }
+    })
+    return NextResponse.json(recipe)
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
 }
