@@ -37,6 +37,8 @@ model RecipesIngredients {
   ingredientId Int
   recipe       Recipe     @relation(fields: [recipeId], references: [id])
   recipeId     Int
+  amount       Int
+  unit         String
 
   @@id([ingredientId, recipeId])
 }
