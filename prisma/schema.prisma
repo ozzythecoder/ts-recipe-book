@@ -23,8 +23,9 @@ model Recipe {
   title  String
   rating Int    @default(0)
 
-  cookTime Int
-  prepTime Int
+  cookTime     Int
+  prepTime     Int
+  instructions String[]
 
   ingredients RecipesIngredients[]
   User        User?                @relation(fields: [userId], references: [id])
