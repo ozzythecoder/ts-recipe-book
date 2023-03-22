@@ -10,8 +10,9 @@ export default async function Recipes() {
 
   return (
     <main>
+      <Link href="/recipes/add">Add Recipe</Link>
       <CardTable>
-        {recipes.map((recipe: Recipe) => (
+        {recipes?.map((recipe: Recipe) => (
           <Link href={`/recipes/${recipe.id}`} key={recipe.id}>
             <RecipePreview recipe={recipe} />
           </Link>
