@@ -1,15 +1,13 @@
 import { getRecipes } from "@/lib/fetch";
-import RecipeDisplay from "@comp/RecipeDisplay";
+import Link from "next/link";
 
 export default async function Home() {
   const recipes = await getRecipes();
 
   return (
     <main>
-
-      <div>
-        <RecipeDisplay recipes={recipes} />
-      </div>
+      <h1>Hi!</h1>
+      <Link href="/recipes">See recipes</Link>
     </main>
   );
 }
