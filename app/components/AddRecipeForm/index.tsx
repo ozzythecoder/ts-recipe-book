@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Button from "@ui/Button";
 import Input from "@ui/Input";
 import Autocomplete from "@ui/Autocomplete";
+import UList from "../ui/UList";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
@@ -41,6 +42,12 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     ]);
   };
 
+  const removeIngredient = (badIngredient: DetailedIngredient) => {
+    setIngredientsIn(
+      ingredientsIn.filter((item) => item.id !== badIngredient.id)
+    );
+  };
+
   const changeAmount = (id: string, newAmount: string) => {
     setIngredientsIn(
       ingredientsIn.map((item) => {
@@ -57,11 +64,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     );
   };
 
-  const removeIngredient = (badIngredient: DetailedIngredient) => {
-    setIngredientsIn(
-      ingredientsIn.filter((item) => item.id !== badIngredient.id)
-    );
-  };
+
 
   useEffect(updateIngredientOptions, [ingredientsIn]);
 
@@ -130,7 +133,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
       <label htmlFor="">
         Ingredients
         {ingredientsIn ? (
-          <ul>
+          <UList>
             {ingredientsIn.map((item) => (
               <IngredientAddition
                 key={item.id}
@@ -140,7 +143,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
                 changeUnit={changeUnit}
               />
             ))}
-          </ul>
+          </UList>
         ) : null}
       </label>
       <Autocomplete options={ingredientOptions} callback={addIngredient} />

@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
-import Button from "../Button";
 
+import Button from "../Button";
+import UList from "../UList";
 
 interface Props extends React.PropsWithChildren {
   options: (Ingredient | DetailedIngredient)[];
@@ -20,23 +21,29 @@ export default function Autocomplete({ options, callback }: Props) {
     setSuggestions(options.filter((item) => reg.test(item.name)));
   };
 
-  useEffect(() => {setSuggestions(options)}, [options])
+  useEffect(() => {
+    setSuggestions(options);
+  }, [options]);
 
   return (
     <>
       <input type="text" value={inputValue} onChange={handleInputChange} />
       {suggestions ? (
-        <ul>
+        <UList>
           {suggestions.map((item) => (
-            <li key={item.id}>{item.name}
-            <Button
-              onClick={(e) => { e.preventDefault(); callback(item) }}
-            >
-              +
-            </Button>
+            <li key={item.id}>
+              <span>{item.name}</span>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  callback(item);
+                }}
+              >
+                +
+              </Button>
             </li>
           ))}
-        </ul>
+        </UList>
       ) : null}
     </>
   );
