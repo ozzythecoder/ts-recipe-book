@@ -124,9 +124,26 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
           className={styles.formItem}
           type="number"
           value={cookTimeIn}
-          onChange={(e) => setCookTime(parseInt(e.target.value))}
+          onChange={(e) => setCookTime(e.target.value)}
         />
       </label>
+      <label htmlFor="">
+        Ingredients
+        {ingredientsIn ? (
+          <ul>
+            {ingredientsIn.map((item) => (
+              <IngredientAddition
+                key={item.id}
+                ingredient={item}
+                remove={removeIngredient}
+                changeAmount={changeAmount}
+                changeUnit={changeUnit}
+              />
+            ))}
+          </ul>
+        ) : null}
+      </label>
+      <Autocomplete options={ingredientOptions} callback={addIngredient} />
       <Button type="submit">Submit</Button>
     </form>
   );
