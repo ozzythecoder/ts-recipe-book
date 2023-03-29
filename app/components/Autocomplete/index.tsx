@@ -4,8 +4,8 @@ import { NewRecipeContext } from "@/lib/context";
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
 
-import Button from "../Button";
-import UList from "../UList";
+import Button from "@ui/Button";
+import UList from "@ui/UList";
 
 interface Props extends React.PropsWithChildren {
   options: (Ingredient | DetailedIngredient)[];
@@ -20,7 +20,6 @@ export default function Autocomplete({
 }: Props) {
 
   const recipe = useContext(NewRecipeContext)
-  console.log(recipe)
 
   const [inputValue, setInput] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Ingredient[]>(options);
