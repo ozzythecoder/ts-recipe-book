@@ -74,24 +74,54 @@ export default function Autocomplete({
 
   return (
     <>
-      <input type="text" value={inputValue} onChange={handleInputChange} />
-      {suggestions ? (
-        <UList>
-          {suggestions.map((item) => (
-            <li key={item.id}>
-              <span>{item.name}</span>
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  callback(item);
-                }}
-              >
-                +
-              </Button>
-            </li>
-          ))}
-        </UList>
-      ) : null}
+      <div
+        style={{
+          marginTop: "2rem",
+          width: "300px",
+          textAlign: "center",
+          margin: "0 auto"
+        }}
+      >
+        <h3>Add Ingredients</h3>
+        <form action="">
+          <span>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+            />
+            <Button onClick={handleNewIngredient}>+</Button>
+          </span>
+        </form>
+        <div
+          style={{
+            height: "12rem",
+            overflowY: "scroll",
+            border: "1px solid gray",
+            borderRadius: "5px"
+          }}
+        >
+          {suggestions ? (
+            <UList>
+              {suggestions.map((item) => (
+                <li key={item.id}>
+                  <span>{item.name}</span>
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      addIngredient(item);
+                    }}
+                  >
+                    +
+                  </Button>
+                </li>
+              ))}
+            </UList>
+          ) : (
+            "Loading..."
+          )}
+        </div>
+      </div>
     </>
   );
 }
