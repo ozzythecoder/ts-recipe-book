@@ -104,63 +104,89 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
   };
 
   return (
-    <form className={styles.flexContainer} onSubmit={handleSubmit}>
-      <label htmlFor="">
-        Title
-        <Input
-          className={styles.formItem}
-          type="text"
-          value={titleIn}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </label>
-      <label htmlFor="">
-        Rating
-        <Input
-          className={styles.formItem}
-          type="number"
-          min={0}
-          max={5}
-          value={ratingIn}
-          onChange={(e) => setRating(e.target.value)}
-        />
-      </label>
-      <label htmlFor="">
-        Prep Time
-        <Input
-          className={styles.formItem}
-          type="number"
-          value={prepTimeIn}
-          onChange={(e) => setPrepTime(e.target.value)}
-        />
-      </label>
-      <label htmlFor="">
-        Cook Time
-        <Input
-          className={styles.formItem}
-          type="number"
-          value={cookTimeIn}
-          onChange={(e) => setCookTime(e.target.value)}
-        />
-      </label>
-      <label htmlFor="">
-        Ingredients
-        {ingredientsIn ? (
-          <UList>
-            {ingredientsIn.map((item) => (
-              <IngredientAddition
-                key={item.id}
-                ingredient={item}
-                remove={removeIngredient}
-                changeAmount={changeAmount}
-                changeUnit={changeUnit}
-              />
-            ))}
-          </UList>
-        ) : null}
-      </label>
-      <Autocomplete options={ingredientOptions} callback={addIngredient} />
-      <Button type="submit">Submit</Button>
-    </form>
+    <>
+      <form
+        className={styles.flexContainer}
+        onKeyDown={suppressEnter}
+        onSubmit={handleSubmit}
+      >
+        <label htmlFor="">
+          Title
+          <Input
+            className={styles.formItem}
+            type="text"
+            value={titleIn}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </label>
+        <label htmlFor="">
+          Rating
+          <Input
+            className={styles.formItem}
+            type="number"
+            min={0}
+            max={5}
+            value={ratingIn}
+            onChange={(e) => setRating(e.target.value)}
+          />
+        </label>
+        <label htmlFor="">
+          Prep Time
+          <Input
+            className={styles.formItem}
+            type="number"
+            value={prepTimeIn}
+            onChange={(e) => setPrepTime(e.target.value)}
+          />
+        </label>
+        <label htmlFor="">
+          Cook Time
+          <Input
+            className={styles.formItem}
+            type="number"
+            value={cookTimeIn}
+            onChange={(e) => setCookTime(e.target.value)}
+          />
+        </label>
+        <label htmlFor="">
+          Ingredients
+          {ingredientsIn ? (
+            <UList>
+              {ingredientsIn.map((item) => (
+                <IngredientAddition
+                  key={item.id}
+                  ingredient={item}
+                  remove={removeIngredient}
+                  changeAmount={changeAmount}
+                  changeUnit={changeUnit}
+                />
+              ))}
+            </UList>
+          ) : null}
+        </label>
+        <label htmlFor="">
+          Instructions
+          {instructionsIn ? (
+            <ol>
+              {instructionsIn.map((item, idx) => (
+                <li key={idx}>
+                  {idx + 1}. {item}
+                </li>
+              ))}
+            </ol>
+          ) : null}
+          {instructionsIn.length + 1}.
+          {/*
+            //TODO textarea component
+          */}
+        </label>
+        <Button type="submit">Add Recipe</Button>
+      </form>
+      <Autocomplete
+        options={ingredientOptions}
+        addIngredient={addIngredient}
+        fetchIngredients={fetchIngredients}
+      />
+    </>
   );
 }
