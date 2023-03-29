@@ -10,6 +10,5 @@ export interface AddRecipeFormType {
   rating: string,
   prepTime: string,
   cookTime: string,
-  ingredients: DetailedIngredient[],
   instructions: string[],
 }

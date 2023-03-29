@@ -6,7 +6,6 @@ import { useReducer, useContext, createContext } from "react";
 import Button from "@ui/Button";
 import UList from "@ui/UList";
 
-import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
 import { AddRecipeFormType } from "@/lib/types";
 
@@ -14,75 +13,97 @@ import styles from "./style.module.css";
 import Autocomplete from "@/app/components/Autocomplete";
 import IngredientAddition from "./IngredientAddition";
 import Input from "../ui/Input";
+import { Ingredient } from "@prisma/client";
 
-interface Props extends React.PropsWithChildren {
-  ingredientInitial: DetailedIngredient[];
-}
+
 
 const initialFormState: AddRecipeFormType = {
   title: "",
   rating: "",
   prepTime: "",
   cookTime: "",
-  ingredients: [],
   instructions: [],
 };
 
 const formReducer = (state, action) => {
+  // @ts-ignore
   return {
     'update_title': { ...state, title: action.payload },
     'update_rating': { ...state, rating: action.payload },
     'update_preptime': { ...state, prepTime: action.payload },
     'update_cooktime': { ...state, cookTime: action.payload },
-    'update_ingredients': { ...state, ingredients: action.payload },
     'update_instructions': { ...state, instructions: action.payload }
   }[action.type] ?? state;
 };
 
 const FormContext = createContext(null);
 
-export default function AddRecipeForm({ ingredientInitial, children }: Props) {
+interface Props extends React.PropsWithChildren {
+  ingredientInitial: DetailedIngredient[];
+}
 
+export default function AddRecipeForm({ ingredientInitial }: Props) {
+
+  // most of form is handled with context
+  const [formState, dispatch] = useReducer(formReducer, initialFormState);
+
+  // ingredients and instructions are handled in local state
   const [ingredientsIn, setIngredientsIn] = useState<DetailedIngredient[]>([]);
-  const [ingredientOptions, setIngredientOptions] =
-    useState<DetailedIngredient[]>(ingredientInitial);
   const [instructionsIn, setInstructionsIn] = useState<string[]>([]);
 
-  const [formState, dispatch] = useReducer(formReducer, initialFormState);
-  
+  // options for ingredients to list
+  const [ingredientOptions, setIngredientOptions] = useState<DetailedIngredient[]>(ingredientInitial);
+
+  // reducer functions
   const updateTitle = (titleIn: string) => {
     dispatch({ type: "update_title", payload: titleIn });
   };
 
-  const updateIngredients = (ingredientIn: Ingredient) => {
-    const ingredientWithDetails = {
-      ...ingredientIn,
-      amount: "0",
-      unit: ""
-    }
-
-    dispatch({ type: "update_ingredients", payload: [ ...formState.ingredients, ingredientWithDetails ] })
+  const updateRating = (ratingIn: string) => {
+    dispatch({ type: "update_rating", payload: ratingIn })
   }
 
-  const deleteIngredient = (ingredientOut: Ingredient) => {
-    dispatch({ type: "update_ingredients", payload: formState.ingredients.filter((item) => item.id !== ingredientOut.id) })
+  const updatePrepTime = (pTimeIn: string) => {
+    dispatch({ type: "update_preptime", payload: pTimeIn })
   }
 
+  const updateCookTime = (cTimeIn: string) => {
+    dispatch({ type: "update_cooktime", payload: cTimeIn })
+  }
+
+  // form state and dispatch functions are passed to context
   const formContextDefault = {
     formState,
     updateTitle,
-    updateIngredients,
-    deleteIngredient
+    updateRating,
+    updatePrepTime,
+    updateCookTime,
   }
 
+  // if an ingredient is in the recipe, remove it from the list
   const updateIngredientOptions = () => {
     setIngredientOptions(
       ingredientInitial.filter((item) => {
-        if (formState.ingredients.map((ing) => ing.id).includes(item.id)) return false;
+        if (ingredientsIn.map((ing) => ing.id).includes(item.id)) return false;
         return true;
       })
     );
   };
+
+  const addIngredient = (ingredient: Ingredient) => {
+    setIngredientsIn(
+      [
+        ...ingredientsIn,
+        { ...ingredient, amount: "0", unit: "" }
+      ]
+    )
+  }
+
+  const deleteIngredient = (ingredient: Ingredient) => {
+    setIngredientsIn(
+      ingredientsIn.filter((item) => item.id !== ingredient.id)
+    )
+  }
 
   const changeAmount = (id: string, newAmount: string) => {
     setIngredientsIn(
@@ -110,10 +131,12 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     })();
   };
 
+  // get ingredient options on page load
   useEffect(fetchIngredients, []);
-  // update remaining options whenever the added ingredients change
-  useEffect(updateIngredientOptions, [formState.ingredients]);
+  // update ingredient options whenever the added ingredients change
+  useEffect(updateIngredientOptions, [ingredientsIn]);
 
+  // submit recipe to DB
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
@@ -133,9 +156,9 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
   };
 
   const IngredientsList = () => {
-    return formState.ingredients ? (
+    return ingredientsIn ? (
       <UList>
-        {formState.ingredients.map((item) => (
+        {ingredientsIn.map((item) => (
           <IngredientAddition
             key={item.id}
             ingredient={item}
@@ -160,6 +183,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     ) : null;
   };
 
+  // render
   return (
     <>
       <FormContext.Provider
@@ -170,7 +194,6 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
           onKeyDown={suppressEnter}
           onSubmit={handleSubmit}
         >
-          <TitleField />
 
           <label htmlFor="">
             Ingredients
@@ -191,23 +214,14 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
 
         <Autocomplete
           options={ingredientOptions}
-          addIngredient={updateIngredients}
+          addIngredient={addIngredient}
           fetchIngredients={fetchIngredients}
         />
         <code>
         {JSON.stringify(formState)}<br />
+        {JSON.stringify(ingredientsIn)}<br />
         </code>
       </FormContext.Provider>
     </>
   );
 }
-
-const TitleField = () => {
-  const { formState, updateTitle } = useContext(FormContext);
-
-  const handleChange = (e) => {
-    updateTitle(e.target.value);
-  };
-
-  return <Input type="text" value={formState.title} onChange={handleChange} />;
-};

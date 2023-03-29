@@ -57,7 +57,7 @@ export default function Autocomplete({
         },
       });
       fetchIngredients();
-      console.log(options);
+      
       const newIngredient = options.find((item) => item.name === inputValue);
       newIngredient
         ? addIngredient(newIngredient)
