@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, createContext } from "react";
+import { useEffect, useState } from "react";
 
 import Button from "@ui/Button";
 import Input from "@ui/Input";
-import Autocomplete from "@ui/Autocomplete";
+import Autocomplete from "@/app/components/Autocomplete";
 import UList from "@ui/UList";
 
 import { Ingredient } from "@prisma/client";
