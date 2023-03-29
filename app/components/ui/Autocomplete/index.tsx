@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { NewRecipeContext } from "@/lib/context";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
@@ -8,10 +9,19 @@ import UList from "../UList";
 
 interface Props extends React.PropsWithChildren {
   options: (Ingredient | DetailedIngredient)[];
-  callback: (newIngredient: Ingredient) => void;
+  addIngredient: (newIngredient: Ingredient) => void;
+  fetchIngredients: () => void;
 }
 
-export default function Autocomplete({ options, callback }: Props) {
+export default function Autocomplete({
+  options,
+  addIngredient,
+  fetchIngredients,
+}: Props) {
+
+  const recipe = useContext(NewRecipeContext)
+  console.log(recipe)
+
   const [inputValue, setInput] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Ingredient[]>(options);
 
