@@ -31,6 +31,43 @@ export default function Autocomplete({
     setSuggestions(options.filter((item) => reg.test(item.name)));
   };
 
+  // Add a new ingredient to the database and to the recipe
+  const handleNewIngredient = async (e?: React.SyntheticEvent) => {
+    e?.preventDefault();
+
+    // Check if ingredient already exists
+    const duplicateIngredient = options.find(
+      (item) => item.name.toLowerCase() === inputValue.toLowerCase()
+    );
+
+    // if input is blank, reject.
+    if (inputValue.length === 0) {
+      console.log("Please enter a valid name for the ingredient.");
+      return;
+    }
+    // if ingredient already exists, add the existing option
+    else if (duplicateIngredient) {
+      addIngredient(duplicateIngredient);
+    } else {
+      // add to the databse
+      await fetch("http://localhost:3000/api/ingredient", {
+        method: "POST",
+        body: JSON.stringify({
+          name: inputValue,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      fetchIngredients();
+      console.log(options);
+      const newIngredient = options.find((item) => item.name === inputValue);
+      newIngredient
+        ? addIngredient(newIngredient)
+        : console.error("Failed to add ingredient; result was undefined");
+    }
+  };
+
   useEffect(() => {
     setSuggestions(options);
   }, [options]);
