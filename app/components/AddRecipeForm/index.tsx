@@ -87,18 +87,20 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
       rating: ratingIn,
       prepTime: prepTimeIn,
       cookTime: cookTimeIn,
-      ingredients: ingredientsIn
-    }
+      ingredients: ingredientsIn,
+    };
 
     await fetch("http://localhost:3000/api/recipe", {
-      body: JSON.stringify(
-        recipeItem
-      ),
+      body: JSON.stringify(recipeItem),
       headers: { "Content-Type": "application/json" },
       method: "POST",
     });
+  };
 
-    console.log(recipeItem)
+  const suppressEnter = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
   };
 
   return (
