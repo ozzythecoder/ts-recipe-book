@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, createContext } from "react";
 
 import Button from "@ui/Button";
 import Input from "@ui/Input";
 import Autocomplete from "@ui/Autocomplete";
-import UList from "../ui/UList";
+import UList from "@ui/UList";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
@@ -25,6 +25,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
   const [ingredientsIn, setIngredientsIn] = useState<DetailedIngredient[]>([]);
   const [ingredientOptions, setIngredientOptions] =
     useState<DetailedIngredient[]>(ingredientInitial);
+  const [instructionsIn, setInstructionsIn] = useState<string[]>([]);
 
   const updateIngredientOptions = () => {
     setIngredientOptions(
@@ -64,8 +65,18 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     );
   };
 
+  const fetchIngredients = () => {
+    (async () => {
+      const dbRes = await fetch("http://localhost:3000/api/ingredient", {
+        cache: "no-cache",
+      });
+      const ingrData = await dbRes.json();
+      setIngredientOptions(ingrData);
+    })();
+  };
 
-
+  useEffect(fetchIngredients, []);
+  // update remaining options whenever the added ingredients change
   useEffect(updateIngredientOptions, [ingredientsIn]);
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
