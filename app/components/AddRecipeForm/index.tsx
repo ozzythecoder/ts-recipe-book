@@ -1,31 +1,63 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useReducer, useContext, createContext } from "react";
 
 import Button from "@ui/Button";
-import Input from "@ui/Input";
-import Autocomplete from "@/app/components/Autocomplete";
 import UList from "@ui/UList";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
+import { AddRecipeFormType } from "@/lib/types";
 
 import styles from "./style.module.css";
+import Autocomplete from "@/app/components/Autocomplete";
 import IngredientAddition from "./IngredientAddition";
 
 interface Props extends React.PropsWithChildren {
   ingredientInitial: DetailedIngredient[];
 }
 
+const initialFormState: AddRecipeFormType = {
+  title: "",
+  rating: "",
+  prepTime: "",
+  cookTime: "",
+  ingredients: [],
+  instructions: [],
+};
+
+const formReducer = (state, action) => {
+
+  return {
+    'update_title': { ...state, title: action.payload },
+    'update_rating': { ...state, rating: action.payload },
+    'update_preptime': { ...state, prepTime: action.payload },
+    'update_cooktime': { ...state, cookTime: action.payload },
+    'update_ingredients': { ...state, ingredients: action.payload },
+    'update_instructions': { ...state, instructions: action.payload }
+  }[action.type] ?? state;
+  
+};
+
+const FormContext = createContext(null);
+
 export default function AddRecipeForm({ ingredientInitial, children }: Props) {
-  const [titleIn, setTitle] = useState<string>("");
-  const [ratingIn, setRating] = useState<string>("");
-  const [prepTimeIn, setPrepTime] = useState<string>("");
-  const [cookTimeIn, setCookTime] = useState<string>("");
+
   const [ingredientsIn, setIngredientsIn] = useState<DetailedIngredient[]>([]);
   const [ingredientOptions, setIngredientOptions] =
     useState<DetailedIngredient[]>(ingredientInitial);
   const [instructionsIn, setInstructionsIn] = useState<string[]>([]);
+
+  const [formState, dispatch] = useReducer(formReducer, initialFormState);
+  
+  const updateTitle = (titleIn: string) => {
+    dispatch({ type: "update_title", payload: titleIn });
+  };
+
+  const updateIngredients = (ingredientIn: Ingredient) => {
+    dispatch({ type: "update_ingredients", payload: [ ...formState.ingredients, ingredientIn ] })
+  }
 
   const updateIngredientOptions = () => {
     setIngredientOptions(
@@ -82,13 +114,7 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    const recipeItem = {
-      title: titleIn,
-      rating: ratingIn,
-      prepTime: prepTimeIn,
-      cookTime: cookTimeIn,
-      ingredients: ingredientsIn,
-    };
+    const recipeItem = {};
 
     await fetch("http://localhost:3000/api/recipe", {
       body: JSON.stringify(recipeItem),
@@ -103,90 +129,82 @@ export default function AddRecipeForm({ ingredientInitial, children }: Props) {
     }
   };
 
+  const IngredientsList = () => {
+    return ingredientsIn ? (
+      <UList>
+        {ingredientsIn.map((item) => (
+          <IngredientAddition
+            key={item.id}
+            ingredient={item}
+            remove={removeIngredient}
+            changeAmount={changeAmount}
+            changeUnit={changeUnit}
+          />
+        ))}
+      </UList>
+    ) : null;
+  };
+
+  const InstructionsList = () => {
+    return instructionsIn ? (
+      <ol>
+        {instructionsIn.map((item, idx) => (
+          <li key={idx}>
+            {idx + 1}. {item}
+          </li>
+        ))}
+      </ol>
+    ) : null;
+  };
+
   return (
     <>
-      <form
-        className={styles.flexContainer}
-        onKeyDown={suppressEnter}
-        onSubmit={handleSubmit}
+      <FormContext.Provider
+        value={{
+          formState,
+          updateTitle,
+        }}
       >
-        <label htmlFor="">
-          Title
-          <Input
-            className={styles.formItem}
-            type="text"
-            value={titleIn}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </label>
-        <label htmlFor="">
-          Rating
-          <Input
-            className={styles.formItem}
-            type="number"
-            min={0}
-            max={5}
-            value={ratingIn}
-            onChange={(e) => setRating(e.target.value)}
-          />
-        </label>
-        <label htmlFor="">
-          Prep Time
-          <Input
-            className={styles.formItem}
-            type="number"
-            value={prepTimeIn}
-            onChange={(e) => setPrepTime(e.target.value)}
-          />
-        </label>
-        <label htmlFor="">
-          Cook Time
-          <Input
-            className={styles.formItem}
-            type="number"
-            value={cookTimeIn}
-            onChange={(e) => setCookTime(e.target.value)}
-          />
-        </label>
-        <label htmlFor="">
-          Ingredients
-          {ingredientsIn ? (
-            <UList>
-              {ingredientsIn.map((item) => (
-                <IngredientAddition
-                  key={item.id}
-                  ingredient={item}
-                  remove={removeIngredient}
-                  changeAmount={changeAmount}
-                  changeUnit={changeUnit}
-                />
-              ))}
-            </UList>
-          ) : null}
-        </label>
-        <label htmlFor="">
-          Instructions
-          {instructionsIn ? (
-            <ol>
-              {instructionsIn.map((item, idx) => (
-                <li key={idx}>
-                  {idx + 1}. {item}
-                </li>
-              ))}
-            </ol>
-          ) : null}
-          {instructionsIn.length + 1}.
-          {/*
+        <form
+          className={styles.flexContainer}
+          onKeyDown={suppressEnter}
+          onSubmit={handleSubmit}
+        >
+          <TestInput />
+
+          <label htmlFor="">
+            Ingredients
+            <IngredientsList />
+          </label>
+
+          <label htmlFor="">
+            Instructions
+            <InstructionsList />
+            {instructionsIn.length + 1}.
+            {/*
             //TODO textarea component
           */}
-        </label>
-        <Button type="submit">Add Recipe</Button>
-      </form>
-      <Autocomplete
-        options={ingredientOptions}
-        addIngredient={addIngredient}
-        fetchIngredients={fetchIngredients}
-      />
+          </label>
+
+          <Button type="submit">Add Recipe</Button>
+        </form>
+        
+        <Autocomplete
+          options={ingredientOptions}
+          addIngredient={addIngredient}
+          fetchIngredients={fetchIngredients}
+        />
+      </FormContext.Provider>
     </>
   );
 }
+
+const TestInput = () => {
+  const { formState, updateTitle } = useContext(FormContext);
+
+  const handleChange = (e) => {
+    updateTitle(e.target.value);
+  };
+
+  return <input type="text" value={formState.title} onChange={handleChange} />;
+};

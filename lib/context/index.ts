@@ -1,5 +1,9 @@
-import { createContext } from "react";
+import { useContext, createContext } from "react";
 
 export const DatabaseContext = createContext(null);
 
-export const NewRecipeContext = createContext(null);
+const NewRecipeContext = createContext(null);
+
+export const useRecipeForm = () => {
+  return useContext(NewRecipeContext)
+}

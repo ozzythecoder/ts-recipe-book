@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { NewRecipeContext } from "@/lib/context";
+import { useRecipeForm } from "@/lib/context";
 
 import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
@@ -18,8 +18,6 @@ export default function Autocomplete({
   addIngredient,
   fetchIngredients,
 }: Props) {
-
-  const recipe = useContext(NewRecipeContext)
 
   const [inputValue, setInput] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Ingredient[]>(options);
