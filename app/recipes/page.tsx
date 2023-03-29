@@ -2,8 +2,10 @@ import Link from "next/link";
 
 import { getRecipes } from "@/lib/fetch";
 import { Recipe } from "@prisma/client";
-import RecipePreview from "../components/RecipePreview";
-import CardTable from "../components/ui/CardTable";
+
+import RecipePreview from "@comp/RecipePreview";
+
+import CardTable from "@ui/CardTable";
 
 export default async function Recipes() {
   const recipes: Recipe[] = await getRecipes();
