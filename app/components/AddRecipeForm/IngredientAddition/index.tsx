@@ -1,16 +1,39 @@
-import { useState } from "react"
+import { useContext } from "react";
 import Button from "@ui/Button";
 
+import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
+import { FormContext } from "../FormContext";
 
 interface Props extends React.PropsWithChildren {
   ingredient: DetailedIngredient;
-  remove: (ingredient: DetailedIngredient) => void;
-  changeAmount: (id: string, newAmount: string) => void;
-  changeUnit: (id: string, newUnit: string) => void;
 }
 
-export default function IngredientAddition({ ingredient, remove, changeAmount, changeUnit }: Props) {
+export default function IngredientAddition({ ingredient }: Props) {
+
+  const { setIngredientsIn, ingredientsIn } = useContext(FormContext)
+
+  const deleteIngredient = (ingredient: Ingredient) => {
+    setIngredientsIn(
+      ingredientsIn.filter((item) => item.id !== ingredient.id)
+    )
+  }
+
+  const changeAmount = (id: string, newAmount: string) => {
+    setIngredientsIn(
+      ingredientsIn.map((item) => {
+        return item.id === parseInt(id) ? { ...item, amount: newAmount } : item;
+      })
+    );
+  };
+
+  const changeUnit = (id: string, newUnit: string) => {
+    setIngredientsIn(
+      ingredientsIn.map((item) => {
+        return item.id === parseInt(id) ? { ...item, unit: newUnit } : item;
+      })
+    );
+  };
 
   return (
     <li>
@@ -18,7 +41,7 @@ export default function IngredientAddition({ ingredient, remove, changeAmount, c
       <input type='text' value={ingredient.unit} onChange={(e) => changeUnit(ingredient.id.toString(), e.target.value)} />
       {ingredient.name}
       <Button
-        onClick={(e) => {e.preventDefault(); remove(ingredient)}}
+        onClick={(e) => {e.preventDefault(); deleteIngredient(ingredient)}}
       >
         -
       </Button>
