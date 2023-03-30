@@ -1,26 +1,30 @@
 import { useEffect, useState, useContext } from "react";
-import { useRecipeForm } from "@/lib/context";
 
 import { Ingredient } from "@prisma/client";
-import { DetailedIngredient } from "@/lib/types";
 
 import Button from "@ui/Button";
 import UList from "@ui/UList";
+import { FormContext } from "../AddRecipeForm/FormContext";
 
-interface Props extends React.PropsWithChildren {
-  options: (Ingredient | DetailedIngredient)[];
-  addIngredient: (newIngredient: Ingredient) => void;
-  fetchIngredients: () => void;
-}
+interface Props extends React.PropsWithChildren {}
 
-export default function Autocomplete({
-  options,
-  addIngredient,
-  fetchIngredients,
-}: Props) {
+export default function Autocomplete({}: Props) {
+  const {
+    ingredientOptions: options,
+    fetchIngredients,
+    ingredientsIn,
+    setIngredientsIn,
+  } = useContext(FormContext);
 
   const [inputValue, setInput] = useState<string>("");
   const [suggestions, setSuggestions] = useState<Ingredient[]>(options);
+
+  const addIngredient = (ingredient: Ingredient) => {
+    setIngredientsIn([
+      ...ingredientsIn,
+      { ...ingredient, amount: "0", unit: "" },
+    ]);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
@@ -46,7 +50,7 @@ export default function Autocomplete({
     else if (duplicateIngredient) {
       addIngredient(duplicateIngredient);
     } else {
-      // add to the databse
+      // ingredient is new; add it to the database
       await fetch("http://localhost:3000/api/ingredient", {
         method: "POST",
         body: JSON.stringify({
@@ -57,7 +61,7 @@ export default function Autocomplete({
         },
       });
       fetchIngredients();
-      
+
       const newIngredient = options.find((item) => item.name === inputValue);
       newIngredient
         ? addIngredient(newIngredient)
@@ -76,7 +80,7 @@ export default function Autocomplete({
           marginTop: "2rem",
           width: "300px",
           textAlign: "center",
-          margin: "0 auto"
+          margin: "0 auto",
         }}
       >
         <h3>Add Ingredients</h3>
@@ -95,7 +99,7 @@ export default function Autocomplete({
             height: "12rem",
             overflowY: "scroll",
             border: "1px solid gray",
-            borderRadius: "5px"
+            borderRadius: "5px",
           }}
         >
           {suggestions ? (
