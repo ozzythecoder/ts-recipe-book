@@ -1,21 +1,13 @@
-
+import styles from './style.module.css';
 
 interface Props extends React.PropsWithChildren {
-
+  style? : React.CSSProperties;
 }
 
-export default function CardTable({ children }: Props) {
-
-  const cardTableStyles: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    margin: '10px 20%',
-  }
+export default function CardTable({ children, style }: Props) {
 
   return (
-    <section style={cardTableStyles}>
+    <section style={style} className={styles.cardTable}>
       {children}
     </section>
   )
