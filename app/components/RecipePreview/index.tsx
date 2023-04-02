@@ -10,7 +10,7 @@ export default function RecipePreview({ recipe }: Props) {
   
   return (
     <Link href={`/recipes/${recipe.id}`}>
-    <Card clickable={true}>
+    <Card style={{ width: '250px' }} clickable={true}>
       <h3>{recipe.title}</h3>
       <p>Prep time: {recipe.prepTime}</p>
       <p>Cook time: {recipe.cookTime}</p>
