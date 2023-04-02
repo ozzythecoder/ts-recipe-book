@@ -17,7 +17,7 @@ export default async function Recipes() {
         {recipes?.map((recipe: Recipe) => (
             <RecipePreview recipe={recipe} key={recipe.id} />
         ))}
-        <Link href="/recipes/add">
+        <Link className="card-link" href="/recipes/add">
           <Card className="center-content" clickable={true}>
             <h3>
               + Add Recipe

@@ -9,7 +9,7 @@ interface Props extends React.PropsWithChildren {
 export default function RecipePreview({ recipe }: Props) {
   
   return (
-    <Link href={`/recipes/${recipe.id}`}>
+    <Link className="card-link" href={`/recipes/${recipe.id}`}>
     <Card style={{ width: '250px' }} clickable={true}>
       <h3>{recipe.title}</h3>
       <p>Prep time: {recipe.prepTime}</p>

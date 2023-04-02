@@ -21,7 +21,7 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+a:hover:not(.card-link) {
   text-decoration: underline;
 }
 
