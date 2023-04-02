@@ -1,0 +1,16 @@
+.card {
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 2rem;
+  width: 250px;
+}
+
+.card > h3 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  background-color: #0000ff11;
+}
