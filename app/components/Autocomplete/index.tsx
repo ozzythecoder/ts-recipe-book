@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from "react";
 
 import { Ingredient } from "@prisma/client";
 
+import Input from "@ui/Input";
+import Card from "@ui/Card"
 import Button from "@ui/Button";
 import UList from "@ui/UList";
 import { FormContext } from "../AddRecipeForm/FormContext";
@@ -77,6 +79,9 @@ export default function Autocomplete({}: Props) {
     <>
       <div
         style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           marginTop: "2rem",
           width: "300px",
           textAlign: "center",
@@ -86,7 +91,7 @@ export default function Autocomplete({}: Props) {
         <h3>Add Ingredients</h3>
         <form action="">
           <span>
-            <input
+            <Input
               type="text"
               value={inputValue}
               onChange={handleInputChange}
@@ -94,12 +99,14 @@ export default function Autocomplete({}: Props) {
             <Button onClick={handleNewIngredient}>+</Button>
           </span>
         </form>
-        <div
+        <Card
           style={{
             height: "12rem",
             overflowY: "scroll",
             border: "1px solid gray",
             borderRadius: "5px",
+            padding: "0.5rem",
+            width: "300px"
           }}
         >
           {suggestions ? (
@@ -121,7 +128,7 @@ export default function Autocomplete({}: Props) {
           ) : (
             "Loading..."
           )}
-        </div>
+        </Card>
       </div>
     </>
   );
