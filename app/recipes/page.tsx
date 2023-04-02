@@ -5,6 +5,7 @@ import { Recipe } from "@prisma/client";
 
 import RecipePreview from "@comp/RecipePreview";
 
+import Card from "@ui/Card";
 import CardTable from "@ui/CardTable";
 
 export default async function Recipes() {
@@ -15,10 +16,15 @@ export default async function Recipes() {
       <Link href="/recipes/add">Add Recipe</Link>
       <CardTable>
         {recipes?.map((recipe: Recipe) => (
-          <Link href={`/recipes/${recipe.id}`} key={recipe.id}>
-            <RecipePreview recipe={recipe} />
-          </Link>
+            <RecipePreview recipe={recipe} key={recipe.id} />
         ))}
+        <Link href="/recipes/add">
+          <Card className="center-content" clickable={true}>
+            <h3>
+              + Add Recipe
+            </h3>
+          </Card>
+        </Link>
       </CardTable>
     </main>
   );

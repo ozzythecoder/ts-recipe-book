@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Recipe } from "@prisma/client";
 import Card from "@ui/Card";
 
@@ -8,10 +9,12 @@ interface Props extends React.PropsWithChildren {
 export default function RecipePreview({ recipe }: Props) {
   
   return (
-    <Card clickable={true} key={recipe.id}>
+    <Link href={`/recipes/${recipe.id}`}>
+    <Card clickable={true}>
       <h3>{recipe.title}</h3>
       <p>Prep time: {recipe.prepTime}</p>
       <p>Cook time: {recipe.cookTime}</p>
     </Card>
+    </Link>
   );
 }
