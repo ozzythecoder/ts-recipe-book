@@ -1,4 +1,4 @@
-import './style.css';
+import './styles.css';
 import clsx from 'clsx';
 
 interface Props extends React.PropsWithChildren {
