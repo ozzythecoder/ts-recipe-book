@@ -2,7 +2,6 @@
 
 import Button from "@ui/Button";
 
-import { Ingredient } from "@prisma/client";
 import { DetailedIngredient } from "@/lib/types";
 
 import { Provider } from "./FormContext";

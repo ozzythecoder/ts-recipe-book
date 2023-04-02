@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import Input from "@ui/Input";
 import Button from "@ui/Button";
 
 import { Ingredient } from "@prisma/client";
@@ -37,8 +38,8 @@ export default function IngredientAddition({ ingredient }: Props) {
 
   return (
     <li>
-      <input type='number' min={0} max={10000} value={ingredient.amount} onChange={(e) => changeAmount(ingredient.id.toString(), e.target.value)} />
-      <input type='text' value={ingredient.unit} onChange={(e) => changeUnit(ingredient.id.toString(), e.target.value)} />
+      <Input type='number' min={0} max={10000} value={ingredient.amount} onChange={(e) => changeAmount(ingredient.id.toString(), e.target.value)} />
+      <Input type='text' value={ingredient.unit} onChange={(e) => changeUnit(ingredient.id.toString(), e.target.value)} />
       {ingredient.name}
       <Button
         onClick={(e) => {e.preventDefault(); deleteIngredient(ingredient)}}
