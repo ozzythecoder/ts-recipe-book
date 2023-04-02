@@ -8,7 +8,7 @@ interface Props extends React.PropsWithChildren {
 export default function RecipePreview({ recipe }: Props) {
   
   return (
-    <Card key={recipe.id}>
+    <Card clickable={true} key={recipe.id}>
       <h3>{recipe.title}</h3>
       <p>Prep time: {recipe.prepTime}</p>
       <p>Cook time: {recipe.cookTime}</p>
