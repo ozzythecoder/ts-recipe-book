@@ -1,21 +1,18 @@
+import styles from './style.module.css';
+import clsx from 'clsx';
 
 interface Props extends React.PropsWithChildren {
   style?: React.CSSProperties
+  clickable?: Boolean;
 }
 
-export default function Card({ children, style }: Props) {
-
-
-  const cardStyles: React.CSSProperties = {
-    border: '1px solid black',
-    borderRadius: '5px',
-    padding: '2rem',
-    width: '250px',
-    ...style
-  }
+export default function Card({ children, clickable = false, style }: Props) {
 
   return (
-    <div style={cardStyles}>
+    <div
+      className={clsx(styles.card, clickable && styles.clickable)}
+      style={style}
+      >
       {children}
     </div>
   )
