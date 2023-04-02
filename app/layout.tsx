@@ -12,7 +12,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <h1
+          className='page-title'
+        >Recipe Book</h1>
+        {children}
+      </body>
     </html>
   )
 }
