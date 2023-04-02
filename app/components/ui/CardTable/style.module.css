@@ -1,9 +1,0 @@
-.cardTable {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  max-width: 60vw;
-  margin: 0 auto;
-  gap: 5px;
-}
