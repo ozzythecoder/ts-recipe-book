@@ -1,16 +1,17 @@
-import styles from './style.module.css';
+import './style.css';
 import clsx from 'clsx';
 
 interface Props extends React.PropsWithChildren {
   style?: React.CSSProperties
+  className?: string;
   clickable?: Boolean;
 }
 
-export default function Card({ children, clickable = false, style }: Props) {
+export default function Card({ children, className = "", clickable = false, style }: Props) {
 
   return (
     <div
-      className={clsx(styles.card, clickable && styles.clickable)}
+      className={clsx("card", className, clickable && "clickable")}
       style={style}
       >
       {children}
