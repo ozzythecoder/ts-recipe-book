@@ -1,4 +1,5 @@
 import { db } from "@/lib/db"
+import RecipePreview from "@components/RecipePreview";
 import Card from "@ui/Card"
 
 export default async function RecipeView() {
@@ -7,9 +8,7 @@ export default async function RecipeView() {
   return (
     <>
       {recipes.map(recipe => (
-        <Card>
-          {JSON.stringify(recipe)}
-        </Card>
+        <RecipePreview recipe={recipe} />
       ))}
     </>
   )
