@@ -3,7 +3,7 @@ interface Props extends React.PropsWithChildren {
   link?: string;
 }
 
-export default function Card({ children, style, link }: Props) {
+export default function Card({ children, style }: Props) {
   const cardStyles: React.CSSProperties = {
     border: "1px solid black",
     borderRadius: "5px",
@@ -12,11 +12,7 @@ export default function Card({ children, style, link }: Props) {
     ...style,
   };
 
-  return link ? (
-    <a href={link}>
-      <div style={cardStyles}>{children}</div>
-    </a>
-  ) : (
+  return (
     <div style={cardStyles}>{children}</div>
-  );
+  )
 }
