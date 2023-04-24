@@ -1,23 +1,39 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { searchParams }: { searchParams: { name?: string } }
-  ) {
+  request: NextRequest,
+) {
+
+  const name = request.nextUrl.searchParams.get('name')
 
   try {
-    
-    const res = await db.recipe.findMany();
+    let res;
+
+    if (name !== null) {
+
+      res = await db.recipe.findMany({
+        where: {
+          title: {
+            contains: name,
+            mode: 'insensitive'
+          }
+        }
+      })
+
+    } else {
+      res = await db.recipe.findMany();
+    }
     return NextResponse.json(res);
+
   } catch (e) {
-    return NextResponse.json({ "message": "There was an oopsie" })
+    return NextResponse.json({ message: "There was an oopsie" });
   }
 }
 
-export async function POST(request: Request) {
-  
-  const body = await request.json();
+export async function POST(request: NextRequest) {
 
-  return NextResponse.json({ "message": `You sent: ${JSON.stringify(body)}`})
+  // TEST ROUTE
+  const body = await request.json();
+  return NextResponse.json({ message: `You sent: ${JSON.stringify(body)}` });
 }
