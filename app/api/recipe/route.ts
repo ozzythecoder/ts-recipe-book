@@ -1,29 +1,35 @@
 import { db } from "@/lib/db";
+import { Recipe } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
 ) {
 
-  const name = request.nextUrl.searchParams.get('name')
+  // get query parameters into js object
+  let params: any = {};
+  for (const [key, val] of request.nextUrl.searchParams.entries()) {
+    params[key] = val;
+  }
+  const { title, cookTime, prepTime, rating, instructions, } = params;
 
   try {
     let res;
 
-    if (name !== null) {
-
+    //TODO implement search for other properties
+    if (title) {
       res = await db.recipe.findMany({
         where: {
           title: {
-            contains: name,
+            contains: title,
             mode: 'insensitive'
           }
         }
       })
-
     } else {
       res = await db.recipe.findMany();
     }
+
     return NextResponse.json(res);
 
   } catch (e) {
