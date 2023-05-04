@@ -1,17 +1,14 @@
 import { db } from "@/lib/db";
 import { Recipe } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { getParamsObject } from "@/lib/helper";
 
 export async function GET(
   request: NextRequest,
 ) {
 
   // get query parameters into js object
-  let params: any = {};
-  for (const [key, val] of request.nextUrl.searchParams.entries()) {
-    params[key] = val;
-  }
-  const { title, cookTime, prepTime, rating, instructions, } = params;
+  const { title, cookTime, prepTime, rating, instructions, } = getParamsObject(request);
 
   try {
     let res;

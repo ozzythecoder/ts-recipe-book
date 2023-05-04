@@ -31,5 +31,5 @@ export async function GET(
   } catch (e) {
     return NextResponse.json({ "message": "We did a whoopsie" })
   }
-
+  
 }
