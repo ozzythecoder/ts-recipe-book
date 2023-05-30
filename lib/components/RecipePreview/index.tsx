@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Card from "@ui/Card";
 import type { Recipe } from "@prisma/client";
 
@@ -6,13 +7,15 @@ interface Props extends React.PropsWithChildren {
 }
 
 // Will show a card with a short preview of the recipe
+// Can be clicked on to go to full recipe
 export default function RecipePreview({ recipe }: Props) {
-
   return (
-    <Card>
-      <h1>{recipe.title}</h1>
-      <p>Prep time: {recipe.prepTime}</p>
-      <p>Cook time: {recipe.cookTime}</p>
-    </Card>
-  )
+    <Link href={`/recipes/${recipe.id}`}>
+      <Card>
+        <h1>{recipe.title}</h1>
+        <p>Prep time: {recipe.prepTime}</p>
+        <p>Cook time: {recipe.cookTime}</p>
+      </Card>
+    </Link>
+  );
 }
