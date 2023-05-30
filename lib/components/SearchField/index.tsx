@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useSearchContext } from "@/lib/context/search";
 
 const SearchField = () => {
@@ -8,14 +8,9 @@ const SearchField = () => {
     if (setRecipeSearch) {
       setRecipeSearch((e.target as HTMLInputElement).value);
     }
-  }
+  };
 
-  return (
-    <>
-      <input type="text" value={recipeSearchIn} onChange={handleChange} />
-      <span>{recipeSearchIn}</span>
-    </>
-  );
+  return <input type="text" value={recipeSearchIn} onChange={handleChange} />;
 };
 
 export default SearchField;
