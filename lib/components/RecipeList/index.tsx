@@ -2,7 +2,8 @@
 import { useSearchContext } from "@/lib/context/search";
 import RecipePreview from "@components/RecipePreview";
 import { Recipe } from "@prisma/client";
-import { useState } from "react";
+
+import CardRow from "@ui/CardRow";
 
 export default function RecipeList({ allRecipes }: { allRecipes: Recipe[] }) {
 
@@ -13,11 +14,11 @@ export default function RecipeList({ allRecipes }: { allRecipes: Recipe[] }) {
   );
 
   return allRecipes ? (
-    <div>
+    <CardRow>
       {displayedRecipes.map((recipe) => (
         <RecipePreview recipe={recipe} />
       ))}
-    </div>
+    </CardRow>
   ) : (
     <>Loading...</>
   )
