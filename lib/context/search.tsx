@@ -4,8 +4,8 @@ import { useContext, createContext, useState } from "react";
 // searching for recipes in list
 
 const SearchContext = createContext<{
-  recipeSearchIn?: string;
-  setRecipeSearch?: React.Dispatch<React.SetStateAction<string>>
+  recipeSearchIn: string;
+  setRecipeSearch: React.Dispatch<React.SetStateAction<string>>
 }>({})
 
 interface Props extends React.PropsWithChildren {}
