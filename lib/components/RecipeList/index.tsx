@@ -5,17 +5,20 @@ import { Recipe } from "@prisma/client";
 import { useState } from "react";
 
 export default function RecipeList({ allRecipes }: { allRecipes: Recipe[] }) {
+
   const { recipeSearchIn } = useSearchContext();
 
   const displayedRecipes = allRecipes.filter(({ title }) =>
     title.toLowerCase().includes(recipeSearchIn.toLowerCase())
   );
 
-  return (
+  return allRecipes ? (
     <div>
       {displayedRecipes.map((recipe) => (
         <RecipePreview recipe={recipe} />
       ))}
     </div>
-  );
+  ) : (
+    <>Loading...</>
+  )
 }
