@@ -1,21 +1,13 @@
 interface Props extends React.PropsWithChildren {
-  style?: React.CSSProperties;
   link?: string;
 }
 
-const Card = ({ children, style }: Props) => {
-  const cardStyles: React.CSSProperties = {
-    border: "1px solid black",
-    borderRadius: "5px",
-    padding: "10px",
-    margin: "5px",
-    minWidth: "200px",
-    ...style,
-  };
-
+const Card = ({ children }: Props) => {
   return (
-    <div style={cardStyles}>{children}</div>
-  )
-}
+    <div className="border-gray-200 border-2 rounded-md border-solid p-5 m-2 w-48 min-w-full hover:bg-gray-400 focus:bg-gray-400">
+      {children}
+    </div>
+  );
+};
 
 export default Card;
