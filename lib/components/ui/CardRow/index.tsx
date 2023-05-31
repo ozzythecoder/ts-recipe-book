@@ -6,13 +6,8 @@ interface Props extends React.PropsWithChildren {
 }
 
 const CardRow = ({ style, link, children }: Props) => {
-  const cardRowStyles: React.CSSProperties = {
-    display: "flex",
-    flexFlow: "row wrap",
-    justifyContent: "space-evenly",
-  };
 
-  return <div style={cardRowStyles}>{children}</div>;
+  return <div className="flex flex-row flex-wrap justify-evenly">{children}</div>;
 }
 
 export default CardRow;
