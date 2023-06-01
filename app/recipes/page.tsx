@@ -1,6 +1,9 @@
 import { db } from "@/lib/db";
+import Button from "@ui/Button";
 import type { Recipe } from "@prisma/client";
 import { SearchContextProvider } from "@/lib/context/search";
+
+import AddRecipeButton from "@components/AddRecipeButton";
 import SearchField from "@components/SearchField";
 import RecipeList from "@components/RecipeList";
 
@@ -17,7 +20,10 @@ export default async function RecipeView() {
   return (
     <main>
       <SearchContextProvider>
-        <SearchField />
+        <div className="flex flex-row place-items-center justify-between md:px-8 mb-6 bg-gray-300 rounded-md">
+          <SearchField />
+          <AddRecipeButton />
+        </div>
         <RecipeList allRecipes={allRecipes} />
       </SearchContextProvider>
     </main>
