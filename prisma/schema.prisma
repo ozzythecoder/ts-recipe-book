@@ -35,6 +35,7 @@ model Recipe {
 model RecipesIngredients {
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   ingredientId Int
+  name         String   @default("")
   recipe       Recipe     @relation(fields: [recipeId], references: [id])
   recipeId     Int
   amount       Int
