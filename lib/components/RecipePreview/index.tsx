@@ -11,10 +11,11 @@ interface Props extends React.PropsWithChildren {
 export default function RecipePreview({ recipe }: Props) {
   return (
     <Link href={`/recipes/${recipe.id}`}>
-      <Card>
-        <h1>{recipe.title}</h1>
+      <Card className="hover:bg-gray-200 max-h-64 aspect-square">
+        <h2 className="text-2xl font-bold">{recipe.title}</h2>
         <p>Prep time: {recipe.prepTime}</p>
         <p>Cook time: {recipe.cookTime}</p>
+        <p className="md:hidden">Rated: {recipe.rating} / 5</p>
       </Card>
     </Link>
   );

@@ -10,11 +10,11 @@ const SearchField = () => {
 
   return (
     <input
-      className="p-2"
+      className="p-2 my-2 border-2 rounded-sm"
       type="text"
       value={recipeSearchIn}
       onChange={handleChange}
-      placeholder={"Search..."}
+      placeholder={"Search Recipes"}
     />
   );
 };
