@@ -1,5 +1,3 @@
-import { Recipe } from "@prisma/client";
-import Card from "@ui/Card";
 import Link from "next/link";
 
 interface Props extends React.PropsWithChildren {}
@@ -7,7 +5,9 @@ interface Props extends React.PropsWithChildren {}
 export default function RecipeLayout({ children }: Props) {
   return (
     <>
-      <Link href="/recipes">Back to recipes</Link>
+    <div className="my-2">
+      <Link href="/recipes" className="text-gray-400 hover:text-black hover:underline focus:underline">Back to recipes</Link>
+    </div>
       <>{children}</>
     </>
   );
