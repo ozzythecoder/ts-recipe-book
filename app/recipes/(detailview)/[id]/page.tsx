@@ -17,7 +17,20 @@ export default async function RecipeView({ params }: Props) {
         equals: parseInt(params.id),
       },
     },
+    include: {
+      ingredients: {
+        select: {
+          ingredient: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
   });
+
+  console.log(recipe)
 
   return (
     <main>
