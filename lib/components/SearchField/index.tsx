@@ -10,7 +10,7 @@ const SearchField = () => {
 
   return (
     <input
-      className="p-2 my-2 border-2 rounded-sm"
+      className="p-2 w-3/5 border-2 rounded-sm"
       type="text"
       value={recipeSearchIn}
       onChange={handleChange}

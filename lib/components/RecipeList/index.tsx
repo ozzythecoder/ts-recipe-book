@@ -6,20 +6,17 @@ import { Recipe } from "@prisma/client";
 import CardRow from "@ui/CardRow";
 
 export default function RecipeList({ allRecipes }: { allRecipes: Recipe[] }) {
-
   const { recipeSearchIn } = useSearchContext();
 
   const displayedRecipes = allRecipes.filter(({ title }) =>
     title.toLowerCase().includes(recipeSearchIn.toLowerCase())
   );
 
-  return allRecipes ? (
+  return (
     <CardRow>
       {displayedRecipes.map((recipe) => (
         <RecipePreview recipe={recipe} />
       ))}
     </CardRow>
-  ) : (
-    <>Loading...</>
-  )
+  );
 }
