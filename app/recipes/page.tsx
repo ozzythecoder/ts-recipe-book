@@ -20,7 +20,7 @@ export default async function RecipeView() {
   return (
     <main>
       <SearchContextProvider>
-        <div className="flex flex-row place-items-center justify-between md:px-8 mb-6 bg-gray-300 rounded-md">
+        <div className="flex flex-col-reverse md:flex-row place-items-center align-middle justify-between px-2 md:px-8 py-4 gap-4 mb-4 bg-gray-300 rounded-md">
           <SearchField />
           <AddRecipeButton />
         </div>
