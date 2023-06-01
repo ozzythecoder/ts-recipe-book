@@ -7,7 +7,7 @@ interface Props extends React.PropsWithChildren {
 
 const CardRow = ({ style, link, children }: Props) => {
 
-  return <div className="flex flex-row flex-wrap justify-evenly">{children}</div>;
+  return <div className="flex flex-col gap-1 md:flex-row md:flex-wrap justify-evenly align-middle">{children}</div>;
 }
 
 export default CardRow;
