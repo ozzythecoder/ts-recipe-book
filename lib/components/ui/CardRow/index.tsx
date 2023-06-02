@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Props extends React.PropsWithChildren {
   style?: React.CSSProperties;
   link?: string;
@@ -7,7 +5,7 @@ interface Props extends React.PropsWithChildren {
 
 const CardRow = ({ style, link, children }: Props) => {
 
-  return <div className="flex flex-col gap-1 md:flex-row md:flex-wrap justify-evenly align-middle">{children}</div>;
+  return <div className="grid grid-cols-1 mobile:grid-cols-2 lg:grid-cols-3 gap-2 justify-evenly align-middle">{children}</div>;
 }
 
 export default CardRow;
