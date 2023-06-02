@@ -19,7 +19,7 @@ export default async function RecipeView({ params }: Props) {
     },
     include: {
       ingredients: {
-        select: {
+        include: {
           ingredient: {
             select: {
               name: true
