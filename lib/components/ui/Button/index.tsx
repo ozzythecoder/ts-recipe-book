@@ -4,7 +4,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-export default function Button({ className, children }: Props) {
+export default function Button({ className, children, ...props }: Props) {
 
-  return <button className={clsx(className, "h-10 px-4 rounded-md bg-blue-700 text-white")}>{children}</button>;
+  return <button {...props} className={clsx(className, "h-10 px-4 rounded-md bg-blue-700 text-white")}>{children}</button>;
 }
