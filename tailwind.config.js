@@ -5,7 +5,11 @@ module.exports = {
     "./lib/**/*.tsx",
   ],
   theme: {
-    extend: {},
+    extend: {
+        screens: {
+            'mobile': '400px'
+        },
+    },
   },
   plugins: [],
 }
