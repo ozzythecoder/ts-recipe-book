@@ -15,7 +15,7 @@ export default function RecipeList({ allRecipes }: { allRecipes: Recipe[] }) {
   return (
     <CardRow>
       {displayedRecipes.map((recipe) => (
-        <RecipePreview recipe={recipe} />
+        <RecipePreview key={recipe.id} recipe={recipe} />
       ))}
     </CardRow>
   );
