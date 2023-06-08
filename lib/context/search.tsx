@@ -3,10 +3,12 @@ import { useContext, createContext, useState } from "react";
 
 // searching for recipes in list
 
-const SearchContext = createContext<{
+interface ISearchContext {
   recipeSearchIn: string;
   setRecipeSearch: React.Dispatch<React.SetStateAction<string>>
-}>({})
+}
+
+const SearchContext = createContext<ISearchContext>({} as ISearchContext)
 
 interface Props extends React.PropsWithChildren {}
 
