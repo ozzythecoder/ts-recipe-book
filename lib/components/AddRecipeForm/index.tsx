@@ -52,8 +52,11 @@ export default function AddRecipeForm() {
     }
   );
 
-  const onSubmit = (data: any) => console.log(data);
+  console.log("errors:", errors)
 
+  const [ratingDisplay, setRatingDisplay] = useState<number>(3);
+
+  const onSubmit = (data: any) => console.log(data);
 
   return (
     <>
@@ -63,18 +66,14 @@ export default function AddRecipeForm() {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="title">Recipe Name</Label>
+          <Label htmlFor="title">Recipe Title</Label>
           <Input
             className={clsx(inputClasses, errors.title && inputErrorClasses)}
             id="title"
             aria-invalid={!!errors.title}
             {...register("title", { required: "Required" })}
           />
-          {errors.title?.message && (
-            <span role="alert" className="text-red-500">
-              {errors.title.message}
-            </span>
-          )}
+          <ErrorMessage msg={errors.title?.message} />
         </div>
 
         <div className="flex flex-row w-3/4 justify-evenly gap-4">
