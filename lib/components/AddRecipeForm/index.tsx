@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import clsx from "clsx";
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -8,32 +8,49 @@ import { Label } from "@ui/label";
 import Button from "@ui/Button";
 import type { Recipe } from "@prisma/client";
 
-interface Props {}
+interface FormData extends Omit<Recipe, "instructions"> {
+  instructions: { step: string }[];
+}
 
-interface FormData extends Recipe {}
-
-const inputClasses =
-  "border-solid border-2 border-border p-2 rounded-md";
+const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
 const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
-export default function AddRecipeForm({}: Props) {
+const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
+  return msg
+    ? <span role="alert" className="text-red-500 text-sm">{msg}</span>
+    : null
+}
+
+export default function AddRecipeForm() {
   const {
     register,
     handleSubmit,
+    clearErrors,
     watch,
     getValues,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
       title: "",
-      cookTime: null,
-      prepTime: null,
       rating: 3,
+      instructions: [{ step: "" }],
     },
   });
 
-  const [ ratingDisplay, setRatingDisplay ] = useState<number>(3)
+  const { fields, append, remove, } = useFieldArray(
+    {
+      control,
+      name: "instructions",
+      rules: {
+        required: "Please add at least one step to the instructions.",
+        validate: {
+          noEmptySteps: (self) => self.every(({step}) => step.length > 0) || "No instructions can be empty."
+        }
+      }
+    }
+  );
 
   const onSubmit = (data: any) => console.log(data);
 
