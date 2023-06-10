@@ -127,12 +127,46 @@ export default function AddRecipeForm() {
               setRatingDisplay(e);
             }}
           />
-          <span className="w-2">
-          {ratingDisplay}
-          </span>
+          <span className="w-2">{ratingDisplay}</span>
         </div>
 
-        <Button type="submit">Submit</Button>
+        {/* //TODO: Ingredient selection */}
+
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="instruction-input">Instructions</Label>
+          <ol>
+
+            {fields.map((field, index) => (
+              <li className="list-item list-decimal" key={field.id}>
+                <div className=" flex flex-row mb-2">
+                  <Input
+                    className={clsx(inputClasses, errors.instructions?.root?.message && inputErrorClasses)}
+                  {...register(`instructions.${index}.step`)} />
+                  <Button
+                    type="button"
+                    className="ml-2 bg-destructive text-xs"
+                    aria-label={`remove step ${index} from instructions`}
+                    onClick={() => remove(index)}
+                  >
+                    Delete step
+                  </Button>
+                </div>
+              </li>
+            ))}
+
+          </ol>
+          <Button
+            className="mx-auto"
+            aria-label="add-step-to-instructions"
+            type="button"
+            onClick={() => append({ step: "" })}
+          >
+            Add Step
+          </Button>
+          <ErrorMessage msg={errors.instructions?.root?.message} />
+        </div>
+
+        <Button type="submit">Submit Recipe</Button>
       </form>
     </>
   );
