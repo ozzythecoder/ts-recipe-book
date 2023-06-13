@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import Button from "@ui/Button";
 import type { Recipe } from "@prisma/client";
 import { SearchContextProvider } from "@/lib/context/search";
 

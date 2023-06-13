@@ -1,4 +1,3 @@
-import { Recipe } from "@prisma/client";
 import { RecipeWithIngredientNames } from "@/lib/types";
 
 interface Props extends React.PropsWithChildren {
