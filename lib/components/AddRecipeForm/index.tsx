@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
-import Button from "@ui/Button";
+import { Button } from "@ui/button";
 import type { Recipe } from "@prisma/client";
 
 interface FormData extends Omit<Recipe, "instructions"> {
