@@ -6,7 +6,8 @@ import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
-import type { Recipe } from "@prisma/client";
+import type { Ingredient, Recipe } from "@prisma/client";
+import IngredientCombobox from "@components/IngredientCombobox";
 
 interface FormData extends Omit<Recipe, "instructions"> {
   instructions: { step: string }[];
@@ -164,6 +165,11 @@ export default function AddRecipeForm() {
             Add Step
           </Button>
           <ErrorMessage msg={errors.instructions?.root?.message} />
+        </div>
+
+        <div>
+          {/* //TODO INGREDIENT COMBOBOX */}
+          <IngredientCombobox ingredients={[] as Ingredient[]} />
         </div>
 
         <Button type="submit">Submit Recipe</Button>
