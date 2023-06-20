@@ -1,5 +1,11 @@
+// TODO:
+// * submission logic
+// * confirm validation
+// * icons & aria labels
+// * finalize responsive layout
+
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import clsx from "clsx";
 import { Slider } from "@ui/slider";
@@ -102,7 +108,6 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
 
-
   const onSubmit = (data: any) => console.log(data);
 
   return (
@@ -112,6 +117,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
         className="flex flex-col justify-center items-center gap-4"
         onSubmit={handleSubmit(onSubmit)}
       >
+        {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="title">Recipe Title</Label>
           <Input
@@ -123,6 +129,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <ErrorMessage msg={errors.title?.message} />
         </div>
 
+        {/* PREP TIME */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="prep-time">Prep Time</Label>
           <Input
@@ -141,6 +148,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <ErrorMessage msg={errors.prepTime?.message} />
         </div>
 
+        {/* COOK TIME */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="cook-time">Cook Time</Label>
           <Input
@@ -159,6 +167,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <ErrorMessage msg={errors.cookTime?.message} />
         </div>
 
+        {/* RATING */}
         <div className="flex flex-col mobile:flex-row w-full justify-center items-center gap-4">
           <Label htmlFor="rating">Rating</Label>
           <Slider
@@ -177,38 +186,63 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <span className="w-2">{ratingDisplay}</span>
         </div>
 
+        {/* 
+          INGREDIENTS
+        */}
         <div>
-          {/* //TODO INGREDIENT COMBOBOX */}
           <Label htmlFor="ingredients">Ingredients</Label>
+          {/* INGREDIENT LIST */}
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <ol>
               {ingredientFields.map((field, index) => (
                 <li key={field.id}>
                   <div className="flex flex-row gap-2">
+                    <Label
+                      className="invisible absolute"
+                      htmlFor={`ingredient-${index}-amount`}
+                    >
+                      Ingredient {index} Amount
+                    </Label>
                     <Input
+                      id={`ingredient-${index}-amount`}
                       className={clsx(
                         inputClasses,
                         errors.ingredients?.root?.message && inputErrorClasses,
                         "flex-[0.5]"
                       )}
-                      placeholder="Amount"
+                      placeholder="Amt"
+                      type="number"
                       {...register(`ingredients.${index}.amount`)}
                     />
+                    <Label
+                      className="invisible absolute"
+                      htmlFor={`ingredient-${index}-unit`}
+                    >
+                      Ingredient {index} Unit
+                    </Label>
                     <Input
-                    className={clsx(
-                      inputClasses,
-                      errors.ingredients?.root?.message && inputErrorClasses,
-                      "flex-1"
-                    )}
+                      id={`ingredient-${index}-unit`}
+                      className={clsx(
+                        inputClasses,
+                        errors.ingredients?.root?.message && inputErrorClasses,
+                        "flex-1"
+                      )}
                       placeholder="Unit"
                       {...register(`ingredients.${index}.unit`)}
                     />
+                    <Label
+                      className="invisible absolute"
+                      htmlFor={`ingredient-${index}-name`}
+                    >
+                      Ingredient {index} Name
+                    </Label>
                     <Input
-                    className={clsx(
-                      inputClasses,
-                      errors.instructions?.root?.message && inputErrorClasses,
-                      "flex-[3]"
-                    )}
+                      id={`ingredient-${index}-name`}
+                      className={clsx(
+                        inputClasses,
+                        errors.instructions?.root?.message && inputErrorClasses,
+                        "flex-[3]"
+                      )}
                       placeholder="Ingredient"
                       {...register(`ingredients.${index}.name`)}
                     />
@@ -226,6 +260,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
               ))}
             </ol>
 
+            {/* INGREDIENT SEARCH & ADDITION */}
             <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -252,6 +287,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                           onClick={() => {
                             appendIngredient({
                               name: searchValueIn,
+                              // @ts-ignore
                               amount: null,
                               unit: "",
                             });
@@ -261,7 +297,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                         </Button>
                       )}
                     </CommandEmpty>
-                    {initIngredients.map(ingredient => (
+                    {initIngredients.map((ingredient) => (
                       <CommandItem key={ingredient.id}>
                         {ingredient.name}
                       </CommandItem>
@@ -270,16 +306,28 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                 </Command>
               </PopoverContent>
             </Popover>
+
+            <ErrorMessage msg={errors.ingredients?.root?.message} />
           </div>
         </div>
 
+        {/*
+          INSTRUCTIONS
+        */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="instruction-input">Instructions</Label>
           <ol>
             {instructionFields.map((field, index, array) => (
               <li className="list-item list-decimal" key={field.id}>
                 <div className={"flex flex-row mb-2"}>
+                  <Label
+                    className="invisible absolute"
+                    htmlFor={`instruction-${index}`}
+                  >
+                    Step {index}
+                  </Label>
                   <Input
+                    id={`instruction-${index}`}
                     className={clsx(
                       inputClasses,
                       errors.instructions?.root?.message && inputErrorClasses
@@ -290,7 +338,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                     <Button
                       type="button"
                       className="ml-2 bg-destructive text-xs rounded-full"
-                      aria-label={`remove step ${index} from instructions`}
+                      aria-label={`remove step number ${index} from instructions`}
                       onClick={() => removeInstruction(index)}
                     >
                       -
@@ -303,7 +351,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <Button
             className="rounded-full text-xs mx-auto w-full -mt-2"
             variant="outline"
-            aria-label="add-step-to-instructions"
+            aria-label="add step to instructions"
             type="button"
             onClick={() => appendInstruction({ step: "" })}
           >
