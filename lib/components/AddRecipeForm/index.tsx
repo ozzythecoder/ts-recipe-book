@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import clsx from "clsx";
 import { Slider } from "@ui/slider";
@@ -36,7 +36,11 @@ const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
   ) : null;
 };
 
-export default function AddRecipeForm() {
+interface Props extends React.PropsWithChildren {
+  initIngredients: Ingredient[];
+}
+
+export default function AddRecipeForm({ initIngredients }: Props) {
   const {
     register,
     handleSubmit,
@@ -97,6 +101,7 @@ export default function AddRecipeForm() {
   const [ratingDisplay, setRatingDisplay] = useState<number>(3);
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
+
 
   const onSubmit = (data: any) => console.log(data);
 
@@ -174,69 +179,106 @@ export default function AddRecipeForm() {
 
         <div>
           {/* //TODO INGREDIENT COMBOBOX */}
-          <div>
+          <Label htmlFor="ingredients">Ingredients</Label>
+          <div className="grid w-full max-w-sm items-center gap-1.5">
             <ol>
               {ingredientFields.map((field, index) => (
                 <li key={field.id}>
                   <div className="flex flex-row gap-2">
                     <Input
-                      className="flex-[0.5]"
+                      className={clsx(
+                        inputClasses,
+                        errors.ingredients?.root?.message && inputErrorClasses,
+                        "flex-[0.5]"
+                      )}
                       placeholder="Amount"
                       {...register(`ingredients.${index}.amount`)}
                     />
                     <Input
-                      className="flex-[1]"
+                    className={clsx(
+                      inputClasses,
+                      errors.ingredients?.root?.message && inputErrorClasses,
+                      "flex-1"
+                    )}
                       placeholder="Unit"
                       {...register(`ingredients.${index}.unit`)}
                     />
                     <Input
-                      className="flex-[3]"
+                    className={clsx(
+                      inputClasses,
+                      errors.instructions?.root?.message && inputErrorClasses,
+                      "flex-[3]"
+                    )}
                       placeholder="Ingredient"
                       {...register(`ingredients.${index}.name`)}
                     />
+                    {index > 0 && (
+                      <Button
+                        type="button"
+                        className="rounded-full text-xs bg-destructive"
+                        onClick={() => removeIngredient(index)}
+                      >
+                        -
+                      </Button>
+                    )}
                   </div>
                 </li>
               ))}
             </ol>
-          </div>
 
-          <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-48" type="button">
-                Add ingredient
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <Command>
-                <CommandInput
-                  placeholder="Search ingredients..."
-                  onValueChange={(search) => setSearchValue(search)}
-                />
-                <CommandList>
-                  <CommandEmpty className="my-2 text-center">
-                    {searchValueIn !== "" && (
-                      <Button
-                        variant="outline"
-                        className="my-0 mx-auto"
-                        type="button"
-                        onClick={() => console.log(searchValueIn)}
-                      >
-                        Create {searchValueIn}?
-                      </Button>
-                    )}
-                  </CommandEmpty>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+            <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="rounded-full text-xs"
+                  type="button"
+                >
+                  Add ingredient
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <Command>
+                  <CommandInput
+                    placeholder="Search ingredients..."
+                    onValueChange={(search) => setSearchValue(search)}
+                  />
+                  <CommandList>
+                    <CommandEmpty className="my-2 text-center">
+                      {searchValueIn !== "" && (
+                        <Button
+                          variant="outline"
+                          className="my-0 mx-auto"
+                          type="button"
+                          onClick={() => {
+                            appendIngredient({
+                              name: searchValueIn,
+                              amount: null,
+                              unit: "",
+                            });
+                          }}
+                        >
+                          Create {searchValueIn}?
+                        </Button>
+                      )}
+                    </CommandEmpty>
+                    {initIngredients.map(ingredient => (
+                      <CommandItem key={ingredient.id}>
+                        {ingredient.name}
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="instruction-input">Instructions</Label>
           <ol>
-            {instructionFields.map((field, index) => (
+            {instructionFields.map((field, index, array) => (
               <li className="list-item list-decimal" key={field.id}>
-                <div className=" flex flex-row mb-2">
+                <div className={"flex flex-row mb-2"}>
                   <Input
                     className={clsx(
                       inputClasses,
@@ -244,25 +286,28 @@ export default function AddRecipeForm() {
                     )}
                     {...register(`instructions.${index}.step`)}
                   />
-                  <Button
-                    type="button"
-                    className="ml-2 bg-destructive text-xs"
-                    aria-label={`remove step ${index} from instructions`}
-                    onClick={() => removeInstruction(index)}
-                  >
-                    Delete step
-                  </Button>
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      className="ml-2 bg-destructive text-xs rounded-full"
+                      aria-label={`remove step ${index} from instructions`}
+                      onClick={() => removeInstruction(index)}
+                    >
+                      -
+                    </Button>
+                  )}
                 </div>
               </li>
             ))}
           </ol>
           <Button
-            className="mx-auto"
+            className="rounded-full text-xs mx-auto w-full -mt-2"
+            variant="outline"
             aria-label="add-step-to-instructions"
             type="button"
             onClick={() => appendInstruction({ step: "" })}
           >
-            Add Step
+            Add step
           </Button>
           <ErrorMessage msg={errors.instructions?.root?.message} />
         </div>
