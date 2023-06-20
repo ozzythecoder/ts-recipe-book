@@ -7,7 +7,6 @@ import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
 import type { Ingredient, Recipe } from "@prisma/client";
-import IngredientCombobox from "@components/IngredientCombobox";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import {
   Command,
@@ -175,6 +174,32 @@ export default function AddRecipeForm() {
 
         <div>
           {/* //TODO INGREDIENT COMBOBOX */}
+          <div>
+            <ol>
+              {ingredientFields.map((field, index) => (
+                <li key={field.id}>
+                  <div className="flex flex-row gap-2">
+                    <Input
+                      className="flex-[0.5]"
+                      placeholder="Amount"
+                      {...register(`ingredients.${index}.amount`)}
+                    />
+                    <Input
+                      className="flex-[1]"
+                      placeholder="Unit"
+                      {...register(`ingredients.${index}.unit`)}
+                    />
+                    <Input
+                      className="flex-[3]"
+                      placeholder="Ingredient"
+                      {...register(`ingredients.${index}.name`)}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
           <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-48" type="button">
