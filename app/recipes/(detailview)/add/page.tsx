@@ -1,11 +1,15 @@
+import { db } from "@/lib/db";
 import AddRecipeForm from "@components/AddRecipeForm";
 
 interface Props {}
 
-export default function AddRecipePage({}: Props) {
+export default async function AddRecipePage({}: Props) {
+
+  const ingredients = await db.ingredient.findMany();
+
   return (
     <main>
-      <AddRecipeForm />
+      <AddRecipeForm initIngredients={ingredients} />
     </main>
   )
 } 
