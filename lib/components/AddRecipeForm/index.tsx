@@ -8,19 +8,34 @@ import { Label } from "@ui/label";
 import { Button } from "@ui/button";
 import type { Ingredient, Recipe } from "@prisma/client";
 import IngredientCombobox from "@components/IngredientCombobox";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@ui/command";
 
-interface FormData extends Omit<Recipe, "instructions"> {
+export interface FormData extends Omit<Recipe, "instructions"> {
   instructions: { step: string }[];
+  ingredients: {
+    name: string;
+    amount: number;
+    unit: string;
+  }[];
 }
 
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
 const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
 const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
-  return msg
-    ? <span role="alert" className="text-red-500 text-sm">{msg}</span>
-    : null
-}
+  return msg ? (
+    <span role="alert" className="text-red-500 text-sm">
+      {msg}
+    </span>
+  ) : null;
+};
 
 export default function AddRecipeForm() {
   const {
@@ -37,25 +52,52 @@ export default function AddRecipeForm() {
       title: "",
       rating: 3,
       instructions: [{ step: "" }],
+      ingredients: [{ name: "", unit: "" }],
     },
   });
 
-  const { fields, append, remove, } = useFieldArray(
-    {
-      control,
-      name: "instructions",
-      rules: {
-        required: "Please add at least one step to the instructions.",
-        validate: {
-          noEmptySteps: (self) => self.every(({step}) => step.length > 0) || "No instructions can be empty."
-        }
-      }
-    }
-  );
+  const {
+    fields: instructionFields,
+    append: appendInstruction,
+    remove: removeInstruction,
+  } = useFieldArray({
+    control,
+    name: "instructions",
+    rules: {
+      required: "Please add at least one step to the instructions.",
+      validate: {
+        noEmptySteps: (self) =>
+          self.every(({ step }) => step.length > 0) ||
+          "No instructions can be empty.",
+      },
+    },
+  });
 
-  console.log("errors:", errors)
+  const {
+    fields: ingredientFields,
+    append: appendIngredient,
+    remove: removeIngredient,
+  } = useFieldArray({
+    control,
+    name: "ingredients",
+    rules: {
+      required: "Please add at least one ingredient.",
+      validate: {
+        noEmptyFields: (self) => {
+          return self.every(
+            (ingredient) =>
+              ingredient.name && ingredient.amount && ingredient.unit
+          );
+        },
+      },
+    },
+  });
+
+  console.log("errors:", errors);
 
   const [ratingDisplay, setRatingDisplay] = useState<number>(3);
+  const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
+  const [searchValueIn, setSearchValue] = useState<string>("");
 
   const onSubmit = (data: any) => console.log(data);
 
@@ -131,45 +173,73 @@ export default function AddRecipeForm() {
           <span className="w-2">{ratingDisplay}</span>
         </div>
 
-        {/* //TODO: Ingredient selection */}
+        <div>
+          {/* //TODO INGREDIENT COMBOBOX */}
+          <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-48" type="button">
+                Add ingredient
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <Command>
+                <CommandInput
+                  placeholder="Search ingredients..."
+                  onValueChange={(search) => setSearchValue(search)}
+                />
+                <CommandList>
+                  <CommandEmpty className="my-2 text-center">
+                    {searchValueIn !== "" && (
+                      <Button
+                        variant="outline"
+                        className="my-0 mx-auto"
+                        type="button"
+                        onClick={() => console.log(searchValueIn)}
+                      >
+                        Create {searchValueIn}?
+                      </Button>
+                    )}
+                  </CommandEmpty>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
 
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="instruction-input">Instructions</Label>
           <ol>
-
-            {fields.map((field, index) => (
+            {instructionFields.map((field, index) => (
               <li className="list-item list-decimal" key={field.id}>
                 <div className=" flex flex-row mb-2">
                   <Input
-                    className={clsx(inputClasses, errors.instructions?.root?.message && inputErrorClasses)}
-                  {...register(`instructions.${index}.step`)} />
+                    className={clsx(
+                      inputClasses,
+                      errors.instructions?.root?.message && inputErrorClasses
+                    )}
+                    {...register(`instructions.${index}.step`)}
+                  />
                   <Button
                     type="button"
                     className="ml-2 bg-destructive text-xs"
                     aria-label={`remove step ${index} from instructions`}
-                    onClick={() => remove(index)}
+                    onClick={() => removeInstruction(index)}
                   >
                     Delete step
                   </Button>
                 </div>
               </li>
             ))}
-
           </ol>
           <Button
             className="mx-auto"
             aria-label="add-step-to-instructions"
             type="button"
-            onClick={() => append({ step: "" })}
+            onClick={() => appendInstruction({ step: "" })}
           >
             Add Step
           </Button>
           <ErrorMessage msg={errors.instructions?.root?.message} />
-        </div>
-
-        <div>
-          {/* //TODO INGREDIENT COMBOBOX */}
-          <IngredientCombobox ingredients={[] as Ingredient[]} />
         </div>
 
         <Button type="submit">Submit Recipe</Button>
