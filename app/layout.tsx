@@ -7,7 +7,7 @@ export default function App({ children }: { children: React.ReactNode }) {
         <title>Recipe Book</title>
       </head>
       <body>
-        <div className="mx-4 md:mx-16 mt-4">
+        <div className="mx-4 md:mx-16 mt-4 mb-12">
           <h1 className="text-4xl font-bold">Recipe Book</h1>
           <div className="flex flex-col md:flex-row mt-6">
             {/* sidebar */}
