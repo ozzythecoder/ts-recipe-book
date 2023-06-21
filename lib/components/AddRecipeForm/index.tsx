@@ -318,7 +318,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <Label htmlFor="instruction-input">Instructions</Label>
           <ol>
             {instructionFields.map((field, index, array) => (
-              <li className="list-item list-decimal" key={field.id}>
+              <li className="list-item list-decimal list-inside mobile:list-outside" key={field.id}>
                 <div className={"flex flex-row mb-2"}>
                   <Label
                     className="invisible absolute"
