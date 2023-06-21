@@ -9,8 +9,8 @@ import RecipeList from "@components/RecipeList";
 export default async function RecipeView() {
   // Fetch recipes and fake network latency
   const getRecipes = async (): Promise<Recipe[]> => {
-    const res = await db.recipe.findMany();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const res = await db.recipe.findMany({ orderBy: { title: 'asc' } });
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     return res;
   };
 

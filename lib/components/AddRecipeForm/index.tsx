@@ -115,6 +115,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     <>
       <h2 className="text-2xl text-center">Add Recipe</h2>
       <form className="flex flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
+
         {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="title">Recipe Title</Label>
