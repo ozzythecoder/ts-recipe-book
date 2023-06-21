@@ -44,7 +44,7 @@ export default function App({ children }: { children: React.ReactNode }) {
               </ul>
             </nav>
             {/* main content */}
-            <div id="main" tabIndex={-1} className="md:w-2/3 xl:w-3/5">
+            <div id="main" tabIndex={-1} className="md:w-2/3 xl:w-3/5 pt-2">
               {children}
             </div>
           </div>
