@@ -8,20 +8,20 @@
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import clsx from "clsx";
+
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
-import type { Ingredient, Recipe } from "@prisma/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
-import {
-  Command,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@ui/command";
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@ui/command";
 
+import type { Ingredient, Recipe } from "@prisma/client";
+
+import { Trash } from "lucide-react";
+import { Textarea } from "@ui/textarea";
+
+// FORM SHAPE
 export interface FormData extends Omit<Recipe, "instructions"> {
   instructions: { step: string }[];
   ingredients: {
@@ -31,9 +31,11 @@ export interface FormData extends Omit<Recipe, "instructions"> {
   }[];
 }
 
+// DEFAULT CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
 const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
+// ERROR COMPONENT
 const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
   return msg ? (
     <span role="alert" className="text-red-500 text-sm">
@@ -47,6 +49,7 @@ interface Props extends React.PropsWithChildren {
 }
 
 export default function AddRecipeForm({ initIngredients }: Props) {
+  // FORM CONFIGURATION
   const {
     register,
     handleSubmit,
@@ -61,10 +64,11 @@ export default function AddRecipeForm({ initIngredients }: Props) {
       title: "",
       rating: 3,
       instructions: [{ step: "" }],
-      ingredients: [{ name: "", unit: "" }],
+      ingredients: [],
     },
   });
 
+  // INSTRUCTION FIELD CONFIGURATION
   const {
     fields: instructionFields,
     append: appendInstruction,
@@ -75,13 +79,12 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     rules: {
       required: "Please add at least one step to the instructions.",
       validate: {
-        noEmptySteps: (self) =>
-          self.every(({ step }) => step.length > 0) ||
-          "No instructions can be empty.",
+        noEmptySteps: (self) => self.every(({ step }) => step.length > 0) || "No instructions can be empty.",
       },
     },
   });
 
+  // INGREDIENT FIELD CONFIGURATION
   const {
     fields: ingredientFields,
     append: appendIngredient,
@@ -93,10 +96,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
       required: "Please add at least one ingredient.",
       validate: {
         noEmptyFields: (self) => {
-          return self.every(
-            (ingredient) =>
-              ingredient.name && ingredient.amount && ingredient.unit
-          );
+          return self.every((ingredient) => ingredient.name && ingredient.amount && ingredient.unit);
         },
       },
     },
@@ -104,6 +104,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
 
   console.log("errors:", errors);
 
+  // LOCAL STATE VARIABLES
   const [ratingDisplay, setRatingDisplay] = useState<number>(3);
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
@@ -113,10 +114,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   return (
     <>
       <h2 className="text-2xl text-center">Add Recipe</h2>
-      <form
-        className="flex flex-col justify-center items-center gap-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className="flex flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
         {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="title">Recipe Title</Label>
@@ -189,72 +187,45 @@ export default function AddRecipeForm({ initIngredients }: Props) {
         {/* 
           INGREDIENTS
         */}
-        <div>
+        <div className="w-full max-w-sm">
           <Label htmlFor="ingredients">Ingredients</Label>
           {/* INGREDIENT LIST */}
-          <div className="grid w-full max-w-sm items-center gap-1.5">
+          <div className="grid items-center gap-1.5">
             <ol>
               {ingredientFields.map((field, index) => (
                 <li key={field.id}>
                   <div className="flex flex-row gap-2">
-                    <Label
-                      className="invisible absolute"
-                      htmlFor={`ingredient-${index}-amount`}
-                    >
+                    <Label className="invisible absolute" htmlFor={`ingredient-${index}-amount`}>
                       Ingredient {index} Amount
                     </Label>
                     <Input
                       id={`ingredient-${index}-amount`}
-                      className={clsx(
-                        inputClasses,
-                        errors.ingredients?.root?.message && inputErrorClasses,
-                        "flex-[0.5]"
-                      )}
+                      className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-[0.5]")}
                       placeholder="Amt"
                       type="number"
                       {...register(`ingredients.${index}.amount`)}
                     />
-                    <Label
-                      className="invisible absolute"
-                      htmlFor={`ingredient-${index}-unit`}
-                    >
+                    <Label className="invisible absolute" htmlFor={`ingredient-${index}-unit`}>
                       Ingredient {index} Unit
                     </Label>
                     <Input
                       id={`ingredient-${index}-unit`}
-                      className={clsx(
-                        inputClasses,
-                        errors.ingredients?.root?.message && inputErrorClasses,
-                        "flex-1"
-                      )}
+                      className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-1")}
                       placeholder="Unit"
                       {...register(`ingredients.${index}.unit`)}
                     />
-                    <Label
-                      className="invisible absolute"
-                      htmlFor={`ingredient-${index}-name`}
-                    >
+                    <Label className="invisible absolute" htmlFor={`ingredient-${index}-name`}>
                       Ingredient {index} Name
                     </Label>
                     <Input
                       id={`ingredient-${index}-name`}
-                      className={clsx(
-                        inputClasses,
-                        errors.instructions?.root?.message && inputErrorClasses,
-                        "flex-[3]"
-                      )}
+                      className={clsx(inputClasses, errors.instructions?.root?.message && inputErrorClasses, "flex-[3]")}
                       placeholder="Ingredient"
                       {...register(`ingredients.${index}.name`)}
                     />
-                    {index > 0 && (
-                      <Button
-                        type="button"
-                        className="rounded-full text-xs bg-destructive"
-                        onClick={() => removeIngredient(index)}
-                      >
-                        -
-                      </Button>
-                    )}
+                    <Button type="button" className="rounded-full text-xs bg-destructive" onClick={() => removeIngredient(index)}>
+                      <Trash size={14} />
+                    </Button>
                   </div>
                 </li>
               ))}
@@ -263,20 +234,13 @@ export default function AddRecipeForm({ initIngredients }: Props) {
             {/* INGREDIENT SEARCH & ADDITION */}
             <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="rounded-full text-xs"
-                  type="button"
-                >
+                <Button variant="outline" className="rounded-full text-xs" type="button">
                   Add ingredient
                 </Button>
               </PopoverTrigger>
               <PopoverContent>
                 <Command>
-                  <CommandInput
-                    placeholder="Search ingredients..."
-                    onValueChange={(search) => setSearchValue(search)}
-                  />
+                  <CommandInput placeholder="Search ingredients..." onValueChange={(search) => setSearchValue(search)} />
                   <CommandList>
                     <CommandEmpty className="my-2 text-center">
                       {searchValueIn !== "" && (
@@ -298,7 +262,17 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       )}
                     </CommandEmpty>
                     {initIngredients.map((ingredient) => (
-                      <CommandItem key={ingredient.id}>
+                      <CommandItem
+                        key={ingredient.id}
+                        onSelect={(selection) => {
+                          appendIngredient({
+                            name: selection,
+                            // @ts-ignore
+                            amount: null,
+                            unit: "",
+                          });
+                        }}
+                      >
                         {ingredient.name}
                       </CommandItem>
                     ))}
@@ -320,30 +294,22 @@ export default function AddRecipeForm({ initIngredients }: Props) {
             {instructionFields.map((field, index, array) => (
               <li className="list-item list-decimal list-inside mobile:list-outside" key={field.id}>
                 <div className={"flex flex-row mb-2"}>
-                  <Label
-                    className="invisible absolute"
-                    htmlFor={`instruction-${index}`}
-                  >
+                  <Label className="invisible absolute" htmlFor={`instruction-${index}`}>
                     Step {index}
                   </Label>
-                  <Input
+                  <Textarea
                     id={`instruction-${index}`}
-                    className={clsx(
-                      inputClasses,
-                      errors.instructions?.root?.message && inputErrorClasses
-                    )}
+                    className={clsx(inputClasses, errors.instructions?.root?.message && inputErrorClasses, "resize-none")}
                     {...register(`instructions.${index}.step`)}
                   />
-                  {index > 0 && (
-                    <Button
-                      type="button"
-                      className="ml-2 bg-destructive text-xs rounded-full"
-                      aria-label={`remove step number ${index} from instructions`}
-                      onClick={() => removeInstruction(index)}
-                    >
-                      -
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    className="ml-2 bg-destructive text-xs rounded-full"
+                    aria-label={`remove step number ${index} from instructions`}
+                    onClick={() => removeInstruction(index)}
+                  >
+                    <Trash size={14} />
+                  </Button>
                 </div>
               </li>
             ))}
