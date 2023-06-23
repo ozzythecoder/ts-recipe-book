@@ -13,5 +13,5 @@ export default function AddRecipeButton({}: Props) {
     router.push('/recipes/add');
   }
 
-  return <Button onClick={handleClick}>Add Recipe</Button>;
+  return <Button role="link" onClick={handleClick}>Add Recipe</Button>;
 }
