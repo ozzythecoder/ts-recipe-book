@@ -8,11 +8,16 @@ export type RecipeWithIngredientNames = Recipe & {
   })[];
 }
 
-export interface FormData extends Omit<Recipe, "instructions" | "id"> {
+// Recipe type in form - will be coerced into proper shape in API
+export interface FormData {
+  title: string;
+  rating: number;
+  cookTime: string;
+  prepTime: string;
   instructions: { step: string }[];
   ingredients: {
     name: string;
-    amount: number;
+    amount: string;
     unit: string;
   }[];
 }
