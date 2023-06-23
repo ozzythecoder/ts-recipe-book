@@ -8,6 +8,8 @@
 import { KeyboardEvent, MouseEventHandler, useEffect, useState } from "react";
 import { useForm, useFieldArray, UseFieldArrayAppend } from "react-hook-form";
 import clsx from "clsx";
+import { FormData } from "@/lib/types";
+import type { Ingredient, Recipe } from "@prisma/client";
 
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -16,20 +18,9 @@ import { Button } from "@ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Textarea } from "@ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@ui/command";
-
-import type { Ingredient, Recipe } from "@prisma/client";
-
 import { Trash } from "lucide-react";
 
-// FORM SHAPE
-export interface FormData extends Omit<Recipe, "instructions"> {
-  instructions: { step: string }[];
-  ingredients: {
-    name: string;
-    amount: number;
-    unit: string;
-  }[];
-}
+
 
 // DEFAULT CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
@@ -108,8 +99,12 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   const [searchValueIn, setSearchValue] = useState<string>("");
 
   // FORM SUBMISSION
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.table(data);
+    await fetch('http://localhost:3000/api/recipe', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
   };
 
   return (
@@ -204,7 +199,9 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-[0.5]")}
                       placeholder="Amt"
                       type="number"
-                      {...register(`ingredients.${index}.amount`)}
+                      {...register(`ingredients.${index}.amount`, {
+                        onChange: () => clearErrors(`ingredients`)
+                      })}
                     />
                     <Label className="invisible absolute" htmlFor={`ingredient-${index}-unit`}>
                       Ingredient {index} Unit
@@ -213,7 +210,9 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       id={`ingredient-${index}-unit`}
                       className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-1")}
                       placeholder="Unit"
-                      {...register(`ingredients.${index}.unit`)}
+                      {...register(`ingredients.${index}.unit`, {
+                        onChange: () => clearErrors(`ingredients`)
+                      })}
                     />
                     <Label className="invisible absolute" htmlFor={`ingredient-${index}-name`}>
                       Ingredient {index} Name
@@ -222,7 +221,9 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       id={`ingredient-${index}-name`}
                       className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-[3]")}
                       placeholder="Ingredient"
-                      {...register(`ingredients.${index}.name`)}
+                      {...register(`ingredients.${index}.name`, {
+                        onChange: () => clearErrors(`ingredients`)
+                      })}
                     />
                     <Button type="button" className="rounded-full text-xs bg-destructive" onClick={() => removeIngredient(index)}>
                       <Trash size={14} />
