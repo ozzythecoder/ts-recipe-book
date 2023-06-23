@@ -5,8 +5,8 @@
 // * finalize responsive layout
 
 "use client";
-import { useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { KeyboardEvent, MouseEventHandler, useEffect, useState } from "react";
+import { useForm, useFieldArray, UseFieldArrayAppend } from "react-hook-form";
 import clsx from "clsx";
 
 import { Slider } from "@ui/slider";
@@ -14,12 +14,12 @@ import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@ui/command";
+import { Textarea } from "@ui/textarea";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@ui/command";
 
 import type { Ingredient, Recipe } from "@prisma/client";
 
 import { Trash } from "lucide-react";
-import { Textarea } from "@ui/textarea";
 
 // FORM SHAPE
 export interface FormData extends Omit<Recipe, "instructions"> {
@@ -96,26 +96,26 @@ export default function AddRecipeForm({ initIngredients }: Props) {
       required: "Please add at least one ingredient.",
       validate: {
         noEmptyFields: (self) => {
-          return self.every((ingredient) => ingredient.name && ingredient.amount && ingredient.unit);
+          return self.every((ingredient) => ingredient.name && ingredient.amount && ingredient.unit) || "No ingredient fields can be empty.";
         },
       },
     },
   });
-
-  console.log("errors:", errors);
 
   // LOCAL STATE VARIABLES
   const [ratingDisplay, setRatingDisplay] = useState<number>(3);
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
 
-  const onSubmit = (data: any) => console.log(data);
+  // FORM SUBMISSION
+  const onSubmit = (data: FormData) => {
+    console.table(data);
+  };
 
   return (
     <>
       <h2 className="text-2xl text-center">Add Recipe</h2>
       <form className="flex flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
-
         {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="title">Recipe Title</Label>
@@ -220,7 +220,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                     </Label>
                     <Input
                       id={`ingredient-${index}-name`}
-                      className={clsx(inputClasses, errors.instructions?.root?.message && inputErrorClasses, "flex-[3]")}
+                      className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-[3]")}
                       placeholder="Ingredient"
                       {...register(`ingredients.${index}.name`)}
                     />
@@ -241,29 +241,11 @@ export default function AddRecipeForm({ initIngredients }: Props) {
               </PopoverTrigger>
               <PopoverContent>
                 <Command>
-                  <CommandInput placeholder="Search ingredients..." onValueChange={(search) => setSearchValue(search)} />
+                  <CommandInput placeholder="Search ingredients..." onValueChange={setSearchValue} />
                   <CommandList>
-                    <CommandEmpty className="my-2 text-center">
-                      {searchValueIn !== "" && (
-                        <Button
-                          variant="outline"
-                          className="my-0 mx-auto"
-                          type="button"
-                          onClick={() => {
-                            appendIngredient({
-                              name: searchValueIn,
-                              // @ts-ignore
-                              amount: null,
-                              unit: "",
-                            });
-                          }}
-                        >
-                          Create {searchValueIn}?
-                        </Button>
-                      )}
-                    </CommandEmpty>
                     {initIngredients.map((ingredient) => (
                       <CommandItem
+                        className="aria-selected:bg-gray-200"
                         key={ingredient.id}
                         onSelect={(selection) => {
                           appendIngredient({
@@ -277,6 +259,22 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                         {ingredient.name}
                       </CommandItem>
                     ))}
+                    {searchValueIn ? (
+                      <CommandItem
+                        className="aria-selected:bg-gray-200"
+                        value={searchValueIn}
+                        onSelect={(selection) => {
+                          appendIngredient({
+                            name: searchValueIn,
+                            // @ts-ignore
+                            amount: null,
+                            unit: "",
+                          });
+                        }}
+                      >
+                        Create&nbsp;<span className="font-bold">{searchValueIn}</span>
+                      </CommandItem>
+                    ) : null}
                   </CommandList>
                 </Command>
               </PopoverContent>
@@ -292,7 +290,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
         <div className="grid w-full max-w-sm items-center gap-1.5">
           <Label htmlFor="instruction-input">Instructions</Label>
           <ol>
-            {instructionFields.map((field, index, array) => (
+            {instructionFields.map((field, index) => (
               <li className="list-item list-decimal list-inside mobile:list-outside" key={field.id}>
                 <div className={"flex flex-row mb-2"}>
                   <Label className="invisible absolute" htmlFor={`instruction-${index}`}>
