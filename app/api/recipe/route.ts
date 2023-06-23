@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { Recipe } from "@prisma/client";
+import type { FormData } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
 import { getParamsObject } from "@/lib/helper";
 
@@ -30,13 +30,18 @@ export async function GET(
     return NextResponse.json(res);
 
   } catch (e) {
-    return NextResponse.json({ message: "There was an oopsie" });
+    return NextResponse.json({ message: "There was an oopsie" }, { status: 500 } );
   }
 }
 
 export async function POST(request: NextRequest) {
 
-  // TEST ROUTE
-  const body = await request.json();
+  const body = await request.json() as FormData;
+  const { title, cookTime, prepTime, rating, ingredients, instructions: instructionsObj } = body;
+  const instructions = instructionsObj.map(({ step }) => step);
+
+  
+
+  console.log('POST RECEIVED:')
   return NextResponse.json({ message: `You sent: ${JSON.stringify(body)}` });
 }
