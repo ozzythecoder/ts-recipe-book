@@ -7,3 +7,12 @@ export type RecipeWithIngredientNames = Recipe & {
     };
   })[];
 }
+
+export interface FormData extends Omit<Recipe, "instructions" | "id"> {
+  instructions: { step: string }[];
+  ingredients: {
+    name: string;
+    amount: number;
+    unit: string;
+  }[];
+}
