@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
   const instructions = instructionsObj.map(({ step }) => step); // coerce into string array
 
   try {
+
   const recipe = await db.recipe.create({
     data: {
       title, cookTime: parseInt(cookTime), prepTime: parseInt(prepTime), rating, instructions,

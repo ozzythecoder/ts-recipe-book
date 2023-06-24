@@ -10,3 +10,12 @@ export const getParamsObject = (request: NextRequest) => {
   
   return params;
 }
+
+// fetcher function for useSWR
+export const fetcher = async (
+  input: RequestInfo | URL,
+  init?: RequestInit
+) => {
+  const res = await fetch(input, init);
+  return res.json();
+}
