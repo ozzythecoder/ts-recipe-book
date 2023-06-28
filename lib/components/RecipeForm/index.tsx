@@ -7,8 +7,8 @@ import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
-import { FormData } from "@/lib/types";
-import type { Ingredient } from "@prisma/client";
+import { FormData, RecipeWithIngredientNames } from "@/lib/types";
+import type { Ingredient, Recipe } from "@prisma/client";
 
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -33,11 +33,34 @@ const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
 };
 
 interface Props extends React.PropsWithChildren {
-  initIngredients: Ingredient[];
+  ingredients: Ingredient[];
+  recipeToEdit?: RecipeWithIngredientNames | null;
 }
 
-export default function AddRecipeForm({ initIngredients }: Props) {
+export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) {
   const router = useRouter();
+
+  // * FORM VALUES
+  // * uses recipe values if a recipe is being edited; otherwise default values
+  const formDefaults = recipeToEdit
+    ? {
+        title: recipeToEdit.title,
+        cookTime: recipeToEdit.cookTime.toString(),
+        prepTime: recipeToEdit.prepTime.toString(),
+        rating: recipeToEdit.rating,
+        instructions: recipeToEdit.instructions.map((inst) => {
+          return { step: inst };
+        }),
+        ingredients: recipeToEdit.ingredients.map((item) => {
+          return { name: item.ingredient.name, amount: item.amount.toString(), unit: item.unit };
+        }),
+      }
+    : {
+        title: "",
+        rating: 3,
+        instructions: [{ step: "" }],
+        ingredients: [],
+      };
 
   //* FORM CONFIGURATION
   const {
@@ -48,12 +71,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     control,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
-    defaultValues: {
-      title: "",
-      rating: 3,
-      instructions: [{ step: "" }],
-      ingredients: [],
-    },
+    defaultValues: formDefaults,
   });
 
   //* INSTRUCTION FIELD CONFIGURATION
@@ -98,8 +116,11 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   //* FORM SUBMISSION
   const onSubmit = async (data: FormData) => {
     console.table(data);
+
+    const method = recipeToEdit ? "PUT" : "POST";
+
     const response = await fetch("http://localhost:3000/api/recipe", {
-      method: "POST",
+      method,
       body: JSON.stringify(data),
     });
 
@@ -121,7 +142,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   //* FUNCTION COMPONENT
   return (
     <>
-      <h2 className="text-2xl text-center">Add Recipe</h2>
+      <h2 className="text-2xl text-center">{recipeToEdit ? "Edit Recipe" : "Add Recipe"}</h2>
       <form className="flex flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
         {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -273,7 +294,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                 <Command>
                   <CommandInput placeholder="Search ingredients..." onValueChange={setSearchValue} />
                   <CommandList>
-                    {initIngredients.map((ingredient) => (
+                    {ingredients.map((ingredient) => (
                       <CommandItem
                         className="aria-selected:bg-gray-200"
                         key={ingredient.id}
@@ -364,7 +385,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
             Please wait...
           </Button>
         ) : (
-          <Button type="submit">Add Recipe</Button>
+          <Button type="submit">{recipeToEdit ? "Save Changes" : "Add Recipe"}</Button>
         )}
       </form>
     </>
