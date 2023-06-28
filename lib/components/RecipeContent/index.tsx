@@ -1,5 +1,6 @@
 import { RecipeWithIngredientNames } from "@/lib/types";
 import DeleteRecipeButton from "@components/DeleteRecipeButton";
+import EditRecipeButton from "@components/EditRecipeButton";
 
 interface Props extends React.PropsWithChildren {
   recipe: RecipeWithIngredientNames;
@@ -8,7 +9,10 @@ interface Props extends React.PropsWithChildren {
 export default function RecipeContent({ recipe }: Props) {
   return (
     <section className="relative">
-      <DeleteRecipeButton className="absolute right-0" id={recipe.id} title={recipe.title} />
+      <div className="absolute right-0">
+        <EditRecipeButton id={recipe.id} title={recipe.title} className="mr-2" />
+        <DeleteRecipeButton id={recipe.id} title={recipe.title} />
+      </div>
       <h2 className="text-2xl font-semibold">{recipe.title}</h2>
       <p>Rating: {recipe.rating} / 5</p>
       <p>Prep time: {recipe.prepTime} minutes</p>

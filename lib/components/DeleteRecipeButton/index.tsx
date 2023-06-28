@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface Props {
-  className: string;
+  className?: string;
   id: number;
   title: string;
 }
@@ -27,9 +27,11 @@ export default function DeleteRecipeButton({ id, className, title }: Props) {
     });
 
     if (response.ok) {
-      router.push("/recipes");
+      router.refresh();
+      router.replace("/recipes");
     } else {
       setLoading(false);
+      alert('Something went wrong. Try again later.' + response.statusText)
       console.log(response.statusText);
     }
   };
