@@ -2,7 +2,7 @@ import Link from "next/link";
 import "./globals.css";
 
 import SkipToContent from "@components/SkipToContent";
-import { Code, Github, HelpCircle, } from "lucide-react";
+import { Code, Github, HelpCircle } from "lucide-react";
 
 const links: { name: string; url: string }[] = [
   {
@@ -52,23 +52,22 @@ export default function App({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col md:flex-row mt-6 mb-2 divide-y mobile:divide-none">
             {/* sidebar */}
             <nav className="mb-2 md:w-1/3 xl:w-1/5">
-              <ul className="flex flex-row justify-evenly mobile:flex-col list-none">
-                {links.map((link) => (
+              <ul className="flex flex-row md:flex-col justify-evenly list-none gap-4">
+                {links.map(({ url, name }) => (
                   <li>
-                    <Link className="text-gray-400 hover:text-black hover:underline focus:underline" href={link.url}>
-                      {link.name}
+                    <Link
+                      className="text-xl text-gray-400 hover:text-black hover:underline focus:underline border-2 border-text-gray-400 p-2 rounded-md md:border-none"
+                      href={url}
+                    >
+                      {name}
                     </Link>
                   </li>
                 ))}
-                </ul>
-                <ul className="flex flex-row justify-evenly mt-6">
+              </ul>
+              <ul className="flex flex-row justify-evenly mt-6">
                 {outsideLinks.map(({ name, url, icon }) => (
                   <li className="list-none">
-                    <Link
-                      href={url}
-                      className="items-center text-gray-400 hover:text-black hover:underline focus:underline"
-                      aria-label={`Link to ${name}`}
-                    >
+                    <Link href={url} className="items-center text-gray-400 hover:text-black hover:underline focus:underline" aria-label={`Link to ${name}`}>
                       {icon}
                     </Link>
                   </li>
