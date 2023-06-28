@@ -1,11 +1,15 @@
 import { db } from "@/lib/db";
+import { FormData } from "@/lib/types";
 import { NextRequest, NextResponse } from "next/server";
-import { revalidateTag } from "next/cache";
+
+type Params = {
+  params: { recipeId: string }
+}
 
 // * Get recipe by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { recipeId: string } }
+  { params }: Params
 ) {
   const { recipeId } = params;
 
@@ -18,9 +22,48 @@ export async function GET(
   return NextResponse.json(res);
 }
 
+// * Edit recipe by ID
+export async function PUT(request: NextRequest, { params }: Params) {
+  try {
+    const id = parseInt(params.recipeId)
+    const { title, cookTime, prepTime, rating, ingredients, instructions: instructionsObj } = await request.json() as FormData;
+    const instructions = instructionsObj.map(({ step }) => step);
+
+    const editedRecipe = await db.recipe.update({
+      where: { id },
+      data: {
+        title, rating, cookTime: parseInt(cookTime), prepTime: parseInt(prepTime), instructions,
+        ingredients: {
+          deleteMany: {},
+          create: ingredients.map(({ unit, amount, name }) => {
+            return {
+              unit,
+              amount: parseInt(amount),
+              ingredient: {
+                connectOrCreate: {
+                  where: { name },
+                  create: { name }
+                }
+              }
+            }
+          })
+        }
+      }
+    })
+
+    console.log('edited recipe', editedRecipe)
+
+    return NextResponse.json({ message: 'Updated recipe', id: editedRecipe.id }, { status: 200, statusText: 'Updated recipe' })
+
+  } catch (error) {
+
+    return NextResponse.json({ message: 'Error updating recipe' }, { status: 500, statusText: `${error}` })
+  }
+}
+
 // * Delete recipe by ID
-export async function DELETE(request: NextRequest, { params }: { params: { recipeId: string }}) {
-  
+export async function DELETE(request: NextRequest, { params }: Params) {
+
   try {
     if (!params.recipeId) throw Error('Invalid ID')
     console.log('deleting recipeId:', params.recipeId)
