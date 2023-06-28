@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import AddRecipeForm from "@components/AddRecipeForm";
+import RecipeForm from "@components/RecipeForm";
 
 interface Props {}
 
@@ -9,7 +9,7 @@ export default async function AddRecipePage({}: Props) {
 
   return (
     <main>
-      <AddRecipeForm initIngredients={ingredients} />
+      <RecipeForm ingredients={ingredients} />
     </main>
   )
-} 
+}
