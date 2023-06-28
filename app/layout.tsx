@@ -2,8 +2,9 @@ import Link from "next/link";
 import "./globals.css";
 
 import SkipToContent from "@components/SkipToContent";
+import { Code, Github, HelpCircle, } from "lucide-react";
 
-const links: { name: string; url: string; }[] = [
+const links: { name: string; url: string }[] = [
   {
     name: "Home",
     url: "/",
@@ -15,6 +16,24 @@ const links: { name: string; url: string; }[] = [
   {
     name: "Add Recipe",
     url: "/recipes/add",
+  },
+];
+
+const outsideLinks: { name: string; url: string; icon: React.ReactElement }[] = [
+  {
+    name: "Repo",
+    url: "https://github.com/ozzythecoder/ts-recipe-book",
+    icon: <Code />,
+  },
+  {
+    name: "GitHub",
+    url: "https://github.com/ozzythecoder",
+    icon: <Github />,
+  },
+  {
+    name: "About Me",
+    url: "https://ozzythecoder.github.io",
+    icon: <HelpCircle />,
   },
 ];
 
@@ -38,6 +57,19 @@ export default function App({ children }: { children: React.ReactNode }) {
                   <li>
                     <Link className="text-gray-400 hover:text-black hover:underline focus:underline" href={link.url}>
                       {link.name}
+                    </Link>
+                  </li>
+                ))}
+                </ul>
+                <ul className="flex flex-row justify-evenly mt-6">
+                {outsideLinks.map(({ name, url, icon }) => (
+                  <li className="list-none">
+                    <Link
+                      href={url}
+                      className="items-center text-gray-400 hover:text-black hover:underline focus:underline"
+                      aria-label={`Link to ${name}`}
+                    >
+                      {icon}
                     </Link>
                   </li>
                 ))}
