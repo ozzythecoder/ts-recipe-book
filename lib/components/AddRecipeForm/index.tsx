@@ -1,5 +1,4 @@
 // TODO:
-// * submission logic
 // * confirm validation
 // * icons & aria labels
 // * finalize responsive layout
@@ -16,10 +15,10 @@ import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
 import { Label } from "@ui/label";
 import { Button } from "@ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Textarea } from "@ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Command, CommandInput, CommandItem, CommandList } from "@ui/command";
-import { Loader2, Trash } from "lucide-react";
+import { Apple, BookOpen, Clock, List, ListOrdered, Loader2, Star, Trash } from "lucide-react";
 
 //* DEFAULT TAILWIND CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
@@ -27,7 +26,6 @@ const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
 //* ERROR COMPONENT
 const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
-
   return msg ? (
     <span role="alert" className="text-red-500 text-sm">
       {msg}
@@ -40,7 +38,6 @@ interface Props extends React.PropsWithChildren {
 }
 
 export default function AddRecipeForm({ initIngredients }: Props) {
-
   const router = useRouter();
 
   //* FORM CONFIGURATION
@@ -107,17 +104,17 @@ export default function AddRecipeForm({ initIngredients }: Props) {
       body: JSON.stringify(data),
     });
 
-    const resData = await response.json() as { message: string; id: number; };
+    const resData = (await response.json()) as { message: string; id: number };
     console.log(response);
-    
+
     if (response.ok) {
       router.push(`/recipes/${resData.id}`);
     } else {
-      console.log(response.statusText)
+      console.log(response.statusText);
       if (response.status === 500) {
-        alert('Something went wrong on our end; try again later.')
+        alert("Something went wrong on our end; try again later.");
       } else {
-        alert('There was an error submitting your recipe.')
+        alert("There was an error submitting your recipe.");
       }
     }
   }; // END FORM SUBMIT
@@ -129,7 +126,10 @@ export default function AddRecipeForm({ initIngredients }: Props) {
       <form className="flex flex-col justify-center items-center gap-4" onSubmit={handleSubmit(onSubmit)}>
         {/* TITLE */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="title">Recipe Title</Label>
+          <Label htmlFor="title" className="flex items-center">
+            Recipe Title
+            <BookOpen className="ml-2 inline h-4 w-4" />
+          </Label>
           <Input
             className={clsx(inputClasses, errors.title && inputErrorClasses)}
             id="title"
@@ -141,7 +141,10 @@ export default function AddRecipeForm({ initIngredients }: Props) {
 
         {/* PREP TIME */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="prep-time">Prep Time</Label>
+          <Label htmlFor="prep-time" className="flex items-center">
+            Prep Time
+            <Clock className="ml-2 inline h-4 w-4" />
+          </Label>
           <Input
             type="number"
             id="prep-time"
@@ -160,7 +163,10 @@ export default function AddRecipeForm({ initIngredients }: Props) {
 
         {/* COOK TIME */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="cook-time">Cook Time</Label>
+          <Label htmlFor="cook-time" className="flex items-center">
+            Cook Time
+            <Clock className="ml-2 inline h-4 w-4" />
+          </Label>
           <Input
             type="number"
             id="cook-time"
@@ -178,29 +184,37 @@ export default function AddRecipeForm({ initIngredients }: Props) {
         </div>
 
         {/* RATING */}
-        <div className="flex flex-col mobile:flex-row w-full justify-center items-center gap-4">
-          <Label htmlFor="rating">Rating</Label>
-          <Slider
-            {...register("rating")}
-            id="rating"
-            className="max-w-xs mobile:w-1/2 hover:cursor-pointer"
-            defaultValue={[3]}
-            min={1}
-            max={5}
-            step={1}
-            onValueChange={([e]) => {
-              setValue("rating", e);
-              setRatingDisplay(e);
-            }}
-          />
-          <span className="w-2">{ratingDisplay}</span>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <Label htmlFor="rating" className="flex items-center">
+            Rating
+            <Star className="ml-2 inline h-4 w-4" />
+          </Label>
+          <div className="flex flex-row justify-center">
+            <Slider
+              {...register("rating")}
+              id="rating"
+              className="hover:cursor-pointer"
+              defaultValue={[3]}
+              min={1}
+              max={5}
+              step={1}
+              onValueChange={([e]) => {
+                setValue("rating", e);
+                setRatingDisplay(e);
+              }}
+            />
+            <span className="ml-4">{ratingDisplay}</span>
+          </div>
         </div>
 
         {/* 
           INGREDIENTS
         */}
         <div className="w-full max-w-sm">
-          <Label htmlFor="ingredients">Ingredients</Label>
+          <Label htmlFor="ingredients" className="flex items-center">
+            Ingredients
+            <Apple className="ml-2 inline h-4 w-4" />
+          </Label>
           {/* INGREDIENT LIST */}
           <div className="grid items-center gap-1.5">
             <ol>
@@ -305,7 +319,10 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           INSTRUCTIONS
         */}
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="instruction-input">Instructions</Label>
+          <Label htmlFor="instruction-input" className="flex items-center">
+            Instructions
+            <ListOrdered className="ml-2 h-4 w-4 inline" />
+          </Label>
           <ol>
             {instructionFields.map((field, index) => (
               <li className="list-item list-decimal list-inside mobile:list-outside" key={field.id}>
@@ -350,7 +367,6 @@ export default function AddRecipeForm({ initIngredients }: Props) {
         ) : (
           <Button type="submit">Add Recipe</Button>
         )}
-
       </form>
     </>
   );
