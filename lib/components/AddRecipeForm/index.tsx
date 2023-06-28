@@ -7,9 +7,10 @@
 "use client";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { FormData } from "@/lib/types";
-import type { Ingredient, } from "@prisma/client";
+import type { Ingredient } from "@prisma/client";
 
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -18,8 +19,7 @@ import { Button } from "@ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Textarea } from "@ui/textarea";
 import { Command, CommandInput, CommandItem, CommandList } from "@ui/command";
-import { Trash } from "lucide-react";
-
+import { Loader, Loader2, Trash } from "lucide-react";
 
 // DEFAULT TAILWIND CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
@@ -46,7 +46,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     clearErrors,
     setValue,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     defaultValues: {
       title: "",
@@ -95,16 +95,24 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
 
-
-
   // FORM SUBMISSION
   const onSubmit = async (data: FormData) => {
     console.table(data);
 
-    await fetch('http://localhost:3000/api/recipe', {
-      method: 'POST',
+    const router = useRouter();
+
+    const response = await fetch("http://localhost:3000/api/recipe", {
+      method: "POST",
       body: JSON.stringify(data),
-    })
+    });
+
+    console.log(response)
+
+    if (response.ok) {
+      router.push('/recipes');
+    } else {
+      console.log(response.statusText)
+    }
   };
 
   return (
@@ -200,7 +208,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       placeholder="Amt"
                       type="number"
                       {...register(`ingredients.${index}.amount`, {
-                        onChange: () => clearErrors(`ingredients`)
+                        onChange: () => clearErrors(`ingredients`),
                       })}
                     />
                     <Label className="invisible absolute" htmlFor={`ingredient-${index}-unit`}>
@@ -211,7 +219,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-1")}
                       placeholder="Unit"
                       {...register(`ingredients.${index}.unit`, {
-                        onChange: () => clearErrors(`ingredients`)
+                        onChange: () => clearErrors(`ingredients`),
                       })}
                     />
                     <Label className="invisible absolute" htmlFor={`ingredient-${index}-name`}>
@@ -222,7 +230,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
                       className={clsx(inputClasses, errors.ingredients?.root?.message && inputErrorClasses, "flex-[3]")}
                       placeholder="Ingredient"
                       {...register(`ingredients.${index}.name`, {
-                        onChange: () => clearErrors(`ingredients`)
+                        onChange: () => clearErrors(`ingredients`),
                       })}
                     />
                     <Button type="button" className="rounded-full text-xs bg-destructive" onClick={() => removeIngredient(index)}>
@@ -326,7 +334,15 @@ export default function AddRecipeForm({ initIngredients }: Props) {
           <ErrorMessage msg={errors.instructions?.root?.message} />
         </div>
 
-        <Button type="submit">Submit Recipe</Button>
+        {isSubmitting ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait...
+          </Button>
+        ) : (
+          <Button type="submit">Add Recipe</Button>
+        )}
+
       </form>
     </>
   );
