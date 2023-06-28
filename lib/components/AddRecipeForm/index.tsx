@@ -19,14 +19,15 @@ import { Button } from "@ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Textarea } from "@ui/textarea";
 import { Command, CommandInput, CommandItem, CommandList } from "@ui/command";
-import { Loader, Loader2, Trash } from "lucide-react";
+import { Loader2, Trash } from "lucide-react";
 
-// DEFAULT TAILWIND CLASSES
+//* DEFAULT TAILWIND CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
 const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
-// ERROR COMPONENT
+//* ERROR COMPONENT
 const ErrorMessage = ({ msg }: { msg: string | undefined }) => {
+
   return msg ? (
     <span role="alert" className="text-red-500 text-sm">
       {msg}
@@ -39,7 +40,10 @@ interface Props extends React.PropsWithChildren {
 }
 
 export default function AddRecipeForm({ initIngredients }: Props) {
-  // FORM CONFIGURATION
+
+  const router = useRouter();
+
+  //* FORM CONFIGURATION
   const {
     register,
     handleSubmit,
@@ -56,7 +60,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     },
   });
 
-  // INSTRUCTION FIELD CONFIGURATION
+  //* INSTRUCTION FIELD CONFIGURATION
   const {
     fields: instructionFields,
     append: appendInstruction,
@@ -72,7 +76,7 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     },
   });
 
-  // INGREDIENT FIELD CONFIGURATION
+  //* INGREDIENT FIELD CONFIGURATION
   const {
     fields: ingredientFields,
     append: appendIngredient,
@@ -90,31 +94,35 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     },
   });
 
-  // LOCAL STATE VARIABLES
+  //* LOCAL STATE VARIABLES
   const [ratingDisplay, setRatingDisplay] = useState<number>(3);
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
 
-  // FORM SUBMISSION
+  //* FORM SUBMISSION
   const onSubmit = async (data: FormData) => {
     console.table(data);
-
-    const router = useRouter();
-
     const response = await fetch("http://localhost:3000/api/recipe", {
       method: "POST",
       body: JSON.stringify(data),
     });
 
-    console.log(response)
-
+    const resData = await response.json() as { message: string; id: number; };
+    console.log(response);
+    
     if (response.ok) {
-      router.push('/recipes');
+      router.push(`/recipes/${resData.id}`);
     } else {
       console.log(response.statusText)
+      if (response.status === 500) {
+        alert('Something went wrong on our end; try again later.')
+      } else {
+        alert('There was an error submitting your recipe.')
+      }
     }
-  };
+  }; // END FORM SUBMIT
 
+  //* FUNCTION COMPONENT
   return (
     <>
       <h2 className="text-2xl text-center">Add Recipe</h2>
