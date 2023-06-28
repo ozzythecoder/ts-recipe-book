@@ -5,11 +5,11 @@
 // * finalize responsive layout
 
 "use client";
-import { KeyboardEvent, MouseEventHandler, useEffect, useState } from "react";
-import { useForm, useFieldArray, UseFieldArrayAppend } from "react-hook-form";
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
 import clsx from "clsx";
 import { FormData } from "@/lib/types";
-import type { Ingredient, Recipe } from "@prisma/client";
+import type { Ingredient, } from "@prisma/client";
 
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -17,12 +17,11 @@ import { Label } from "@ui/label";
 import { Button } from "@ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Textarea } from "@ui/textarea";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@ui/command";
+import { Command, CommandInput, CommandItem, CommandList } from "@ui/command";
 import { Trash } from "lucide-react";
 
 
-
-// DEFAULT CLASSES
+// DEFAULT TAILWIND CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
 const inputErrorClasses = "border-red-500 focus:outline-red-500";
 
@@ -45,8 +44,6 @@ export default function AddRecipeForm({ initIngredients }: Props) {
     register,
     handleSubmit,
     clearErrors,
-    watch,
-    getValues,
     setValue,
     control,
     formState: { errors },
@@ -98,9 +95,12 @@ export default function AddRecipeForm({ initIngredients }: Props) {
   const [comboboxOpen, setComboboxOpen] = useState<boolean>(false);
   const [searchValueIn, setSearchValue] = useState<string>("");
 
+
+
   // FORM SUBMISSION
   const onSubmit = async (data: FormData) => {
     console.table(data);
+
     await fetch('http://localhost:3000/api/recipe', {
       method: 'POST',
       body: JSON.stringify(data),
