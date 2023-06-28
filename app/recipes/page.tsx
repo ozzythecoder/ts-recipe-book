@@ -1,3 +1,5 @@
+export const revalidate = 0;
+
 import { db } from "@/lib/db";
 import type { Recipe } from "@prisma/client";
 import { SearchContextProvider } from "@/lib/context/search";
