@@ -7,30 +7,30 @@ type Params = {
 }
 
 // * Get recipe by ID
-export async function GET(
-  request: NextRequest,
-  { params }: Params
-) {
-  const { recipeId } = params;
+export async function GET(request: NextRequest, { params }: Params) {
+  
+  try {
+    const res = await db.recipe.findUnique({
+      where: {
+        id: parseInt(params.recipeId),
+      },
+    });
+    return NextResponse.json(res, { status: 200, statusText: 'OK' });
+  } catch (error) {
+    return NextResponse.json({ message: 'Error finding recipe' }, { status: error === 'Error: Invalid ID' ? 400 : 500, statusText: `${error}` })
+  }
 
-  const res = await db.recipe.findUnique({
-    where: {
-      id: parseInt(recipeId),
-    },
-  });
-
-  return NextResponse.json(res);
 }
 
 // * Edit recipe by ID
 export async function PUT(request: NextRequest, { params }: Params) {
   try {
-    const id = parseInt(params.recipeId)
+    if (!params.recipeId) throw Error('Invalid ID')
     const { title, cookTime, prepTime, rating, ingredients, instructions: instructionsObj } = await request.json() as FormData;
     const instructions = instructionsObj.map(({ step }) => step);
 
     const editedRecipe = await db.recipe.update({
-      where: { id },
+      where: { id: parseInt(params.recipeId) },
       data: {
         title, rating, cookTime: parseInt(cookTime), prepTime: parseInt(prepTime), instructions,
         ingredients: {
