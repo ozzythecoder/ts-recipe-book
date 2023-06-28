@@ -1,6 +1,5 @@
 // TODO:
 // * confirm validation
-// * icons & aria labels
 // * finalize responsive layout
 
 "use client";
