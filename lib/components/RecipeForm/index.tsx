@@ -117,9 +117,11 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
   const onSubmit = async (data: FormData) => {
     console.table(data);
 
+    const recipeId = recipeToEdit ? `/${recipeToEdit.id}` : ''
+
     const method = recipeToEdit ? "PUT" : "POST";
 
-    const response = await fetch("http://localhost:3000/api/recipe", {
+    const response = await fetch(`http://localhost:3000/api/recipe${recipeId}`, {
       method,
       body: JSON.stringify(data),
     });
@@ -128,6 +130,7 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
     console.log(response);
 
     if (response.ok) {
+      router.refresh();
       router.push(`/recipes/${resData.id}`);
     } else {
       console.log(response.statusText);
