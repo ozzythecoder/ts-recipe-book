@@ -8,7 +8,7 @@ interface Props extends React.PropsWithChildren {
 export default function RecipeContent({ recipe }: Props) {
   return (
     <section className="relative">
-      <DeleteRecipeButton className="absolute right-0" id={recipe.id} />
+      <DeleteRecipeButton className="absolute right-0" id={recipe.id} title={recipe.title} />
       <h2 className="text-2xl font-semibold">{recipe.title}</h2>
       <p>Rating: {recipe.rating} / 5</p>
       <p>Prep time: {recipe.prepTime} minutes</p>
