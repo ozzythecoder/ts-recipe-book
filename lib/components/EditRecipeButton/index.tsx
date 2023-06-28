@@ -1,7 +1,8 @@
-'use client';
+"use client";
 import { Button } from "@ui/button";
-import { Pen } from "lucide-react";
+import { Loader2, Pen } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
   className?: string;
@@ -10,16 +11,18 @@ interface Props {
 }
 
 export default function EditRecipeButton({ className, id, title }: Props) {
-
   const router = useRouter();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const handleEdit = () => {
-    alert('bazinga')
-  }
+    setLoading(true);
+    router.push(`/recipes/edit/${id}`);
+  };
 
   return (
-    <Button size='sm' className={className} onClick={handleEdit} type="button" >
-      <Pen className="h-4 w-4" />
+    <Button disabled={loading} aria-label={`Edit recipe ${title}`} size="sm" className={className} onClick={handleEdit} type="button">
+      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Pen className="h-4 w-4" />}
     </Button>
-  )
+  );
 }
