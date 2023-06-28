@@ -44,29 +44,31 @@ export async function POST(request: NextRequest) {
 
   try {
 
-  const recipe = await db.recipe.create({
-    data: {
-      title, cookTime: parseInt(cookTime), prepTime: parseInt(prepTime), rating, instructions,
-      ingredients: {
-        create: ingredients.map(({ unit, amount, name }) => {
-          return {
-            unit,
-            amount: parseInt(amount),
-            ingredient: {
-              connectOrCreate: {
-                where: { name },
-                create: { name }
+    const recipe = await db.recipe.create({
+      data: {
+        title, cookTime: parseInt(cookTime), prepTime: parseInt(prepTime), rating, instructions,
+        ingredients: {
+          create: ingredients.map(({ unit, amount, name }) => {
+            return {
+              unit,
+              amount: parseInt(amount),
+              ingredient: {
+                connectOrCreate: {
+                  where: { name },
+                  create: { name }
+                }
               }
             }
-          }
-        })
+          })
+        }
       }
-    }
-  })
+    })
 
-  return NextResponse.json({ message: 'Recipe created' }, { status: 201, statusText: 'Recipe created' });
+    console.log(recipe)
+
+    return NextResponse.json({ message: 'Recipe created', id: recipe.id }, { status: 201, statusText: 'Recipe created', });
   } catch (error) {
-    return NextResponse.json({ message: 'Error creating recipe'}, { status: 500, statusText: `Error: ${error}` })
+    return NextResponse.json({ message: 'Error creating recipe' }, { status: 500, statusText: `${error}` })
   }
 
 }
