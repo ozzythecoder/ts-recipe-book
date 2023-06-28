@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic"
 
-import { cache } from "react";
 import { db } from "@/lib/db";
 import type { Recipe } from "@prisma/client";
 import { SearchContextProvider } from "@/lib/context/search";
