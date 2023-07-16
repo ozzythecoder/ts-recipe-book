@@ -8,7 +8,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { FormData, RecipeWithIngredientNames } from "@/lib/types";
-import type { Ingredient, Recipe } from "@prisma/client";
+import type { Ingredient, } from "@prisma/client";
 
 import { Slider } from "@ui/slider";
 import { Input } from "@ui/input";
@@ -17,7 +17,7 @@ import { Button } from "@ui/button";
 import { Textarea } from "@ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@ui/popover";
 import { Command, CommandInput, CommandItem, CommandList } from "@ui/command";
-import { Apple, BookOpen, Clock, List, ListOrdered, Loader2, Star, Trash } from "lucide-react";
+import { Apple, BookOpen, Clock, ListOrdered, Loader2, Star, Trash } from "lucide-react";
 
 //* DEFAULT TAILWIND CLASSES
 const inputClasses = "border-solid border-2 border-border p-2 rounded-md";
@@ -317,7 +317,7 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
                       <CommandItem
                         className="aria-selected:bg-gray-200"
                         value={searchValueIn}
-                        onSelect={(selection) => {
+                        onSelect={() => {
                           appendIngredient({
                             name: searchValueIn,
                             // @ts-ignore
