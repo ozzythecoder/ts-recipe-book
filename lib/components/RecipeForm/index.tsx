@@ -1,7 +1,7 @@
 // TODO:
 // * confirm validation
 // * finalize responsive layout
-
+// * fix ingredient name bug (newly added ingredient remains in list when menu is reopened)
 "use client";
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -304,7 +304,6 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
                         onSelect={(selection) => {
                           appendIngredient({
                             name: selection,
-                            // @ts-ignore
                             amount: null,
                             unit: "",
                           });
@@ -317,13 +316,13 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
                       <CommandItem
                         className="aria-selected:bg-gray-200"
                         value={searchValueIn}
-                        onSelect={() => {
-                          appendIngredient({
+                        onSelect={async () => {
+                          await appendIngredient({
                             name: searchValueIn,
-                            // @ts-ignore
                             amount: null,
                             unit: "",
                           });
+                          setSearchValue("");
                         }}
                       >
                         Create&nbsp;<span className="font-bold">{searchValueIn}</span>
@@ -333,7 +332,6 @@ export default function RecipeForm({ ingredients, recipeToEdit = null }: Props) 
                 </Command>
               </PopoverContent>
             </Popover>
-
             <ErrorMessage msg={errors.ingredients?.root?.message} />
           </div>
         </div>
