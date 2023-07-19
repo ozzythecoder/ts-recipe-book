@@ -17,7 +17,7 @@ export interface FormData {
   instructions: { step: string }[];
   ingredients: {
     name: string;
-    amount: string;
+    amount: string | null;
     unit: string;
   }[];
 }
