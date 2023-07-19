@@ -23,7 +23,7 @@ export default function RecipeContent({ recipe }: Props) {
           <p className="font-bold">Ingredients:</p>
           <ul className="list-disc list-inside">
             {recipe.ingredients.map((ingredient) => (
-              <li>
+              <li key={ingredient.ingredientId}>
                 {`
                   ${ingredient.amount}
                   ${ingredient.unit === "each" ? "" : ingredient.unit}
